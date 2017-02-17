@@ -18,19 +18,13 @@
         android:text="@string/app_name"
         android:textSize="30pt" />
 
-    <android.support.design.widget.TextInputLayout
+    <EditText
+        android:id="@+id/itemID"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <AutoCompleteTextView
-            android:id="@+id/itemID"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/prompt_id"
-            android:inputType="text"
-            android:maxLines="1" />
-
-    </android.support.design.widget.TextInputLayout>
+        android:layout_height="wrap_content"
+        android:hint="@string/prompt_id"
+        android:inputType="text"
+        android:maxLines="1" />
 
     <Button
         android:id="@+id/search_button"
@@ -39,6 +33,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="@string/search"
+        android:onClick="onSearchButtonClick"
         android:textStyle="bold" />
 
     <Button
@@ -48,6 +43,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="@string/settings"
+        android:onClick="onSettingsButtonClick"
         android:textStyle="bold" />
 
 </LinearLayout>
