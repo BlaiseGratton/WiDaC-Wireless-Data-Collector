@@ -20,7 +20,7 @@
         android:orientation="vertical">
 
         <TextView
-            android:text="Item 123456"
+            android:text="Item 123"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/settings_title"
@@ -33,7 +33,7 @@
             android:src="@drawable/shard"
             android:layout_below="@+id/textView"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="56dp"
+            android:layout_marginTop="10dp"
             android:id="@+id/imageView" />
 
         <TextView
@@ -41,15 +41,35 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:textSize="12pt" />
+            android:textSize="12pt"
+            android:id="@+id/itemWeight" />
 
         <Button
-            android:id="@+id/update_weight_button"
+            android:id="@+id/update_bluetooth"
             style="?android:textAppearanceSmall"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="@string/update_weight"
+            android:onClick="onUpdateBluetoothButtonClick"
+            android:text="@string/update_bluetooth"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/new_weight"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/prompt_weight"
+            android:inputType="text"
+            android:maxLines="1" />
+
+        <Button
+            android:id="@+id/update_manual"
+            style="?android:textAppearanceSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:onClick="onUpdateManualButtonClick"
+            android:text="@string/update_manual"
             android:textStyle="bold" />
 
     </LinearLayout>

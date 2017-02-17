@@ -28,4 +28,9 @@ public class MainActivity extends AppCompatActivity {
         Intent i = new Intent(this, SettingsActivity.class);
         startActivityForResult(i, 1);
     }
+
+    public void onVisualizationButtonClick(View v) {
+        Intent i = new Intent(this, VisualizationActivity.class);
+        startActivityForResult(i, 1);
+    }
 }
