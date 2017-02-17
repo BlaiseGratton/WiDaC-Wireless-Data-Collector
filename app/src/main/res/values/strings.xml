@@ -12,4 +12,5 @@
     <string name="update_bluetooth">Update Weight from Bluetooth</string>
     <string name="update_manual">Update Weight Manually</string>
     <string name="prompt_weight">Enter new weight</string>
+    <string name="sessionReport">Session Report</string>
 </resources>

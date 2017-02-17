@@ -33,4 +33,9 @@ public class MainActivity extends AppCompatActivity {
         Intent i = new Intent(this, VisualizationActivity.class);
         startActivityForResult(i, 1);
     }
+
+    public void onSessionReportButtonClick(View v) {
+        Intent i = new Intent(this, SessionReportActivity.class);
+        startActivityForResult(i, 1);
+    }
 }
