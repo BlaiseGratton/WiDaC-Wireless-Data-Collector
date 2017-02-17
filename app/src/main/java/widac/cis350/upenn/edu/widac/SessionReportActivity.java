@@ -5,6 +5,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.widget.TextView;
 
+import java.util.Set;
+
 /**
  * Created by J. Patrick Taggart on 2/17/2017.
  * ===================================================
@@ -15,11 +17,14 @@ import android.widget.TextView;
  */
 
 public class SessionReportActivity extends AppCompatActivity {
+    private Set<String> currentSession; // List of ids
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.session_report);
 
+        currentSession = Session.getCurrentSession();
         createSessionReport();
     }
 

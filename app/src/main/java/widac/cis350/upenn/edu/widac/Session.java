@@ -5,22 +5,29 @@ import java.util.Set;
 
 /**
  * Created by J. Patrick Taggart on 2/17/2017.
+ * =============================================
+ * Store the ids of entries that have been modified durring current session
+ * Also add
  */
 
 public class Session {
-    private Set<String> entries = new HashSet<String>();
+    private static Set<String> entries = new HashSet<String>();
 
-    public boolean  addEntry(String id) {
+    public static boolean  addEntry(String id) {
         entries.add(id);
         return true;
     }
 
-    public boolean updateEntry(String oldID, String newID) {
+    public static boolean updateEntry(String oldID, String newID) {
         if (entries.contains(oldID)) {
             entries.remove(oldID);
             entries.add(newID);
             return true;
         }
         return false;
+    }
+
+    public static Set<String> getCurrentSession() {
+        return entries;
     }
 }
