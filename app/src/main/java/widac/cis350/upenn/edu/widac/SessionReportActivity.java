@@ -20,7 +20,7 @@ public class SessionReportActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.session_report);
 
-        //createSessionReport();
+        createSessionReport();
     }
 
     private void createSessionReport() {
@@ -30,9 +30,21 @@ public class SessionReportActivity extends AppCompatActivity {
 
     // Provide overview of data collected in recent session
     private void generateStatistics() {
-        int itemsCollected = -1; //
-        TextView itemsCollectedText = (TextView)findViewById(R.id.itemsCollected);
-        itemsCollectedText.setText(itemsCollected);
+        int itemsCollected = -1;
+
+        // Better to store all text views as local variables, just have one textview variable that changes, or one for each?
+        // Instead make sections with drop downs that show the data?
+        TextView tv = (TextView)findViewById(R.id.itemsCollected);
+        tv.setText("Items collected: " + itemsCollected);
+
+        tv = (TextView)findViewById(R.id.typesCollected);
+        tv.setText("Type A: " + 40 + "%, Type B: " + 60 + "%");
+
+        tv = (TextView)findViewById(R.id.genresCollected);
+        tv.setText("Roman Pottery: " + 23 + "%, Greek Pottery: " + 21 + "%. Hittite Arrowheads: " + 55 + "%");
+
+        tv = (TextView)findViewById(R.id.averageWeight);
+        tv.setText("Average Weight: " + 6.832);
     }
 
     // Load data on a piece recorded during this session
