@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">WiDaC</string>
+
+    <string name="search">Search</string>
+    <string name="settings">Settings</string>
+    <string name="prompt_id">Enter item ID...</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_search">SearchActivity</string>
+    <string name="title_activity_settings">SettingsActivity</string>
+    <string name="curr_connected">Currently connected to:</string>
+    <string name="update_weight">Update Weight</string>
+</resources>
