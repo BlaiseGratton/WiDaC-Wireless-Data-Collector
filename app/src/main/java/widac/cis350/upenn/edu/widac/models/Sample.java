@@ -13,6 +13,7 @@ public class Sample {
     int area_northing;
     int context_number;
     int sample_number;
+    String composite_key;
     String material;
     double weight;
 
@@ -28,6 +29,12 @@ public class Sample {
         this.sample_number = sample_number;
         this.material = material;
         this.weight = weight;
+        this.composite_key = create_key();
+    }
+
+    public String create_key() {
+        return Integer.toString(area_easting) + "." + Integer.toString(area_northing)
+                + "." + Integer.toString(context_number) + "." + Integer.toString(sample_number);
     }
 
     public Map<String, Object> toMap() {
