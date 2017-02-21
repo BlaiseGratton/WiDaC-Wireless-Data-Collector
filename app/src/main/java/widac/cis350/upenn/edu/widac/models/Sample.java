@@ -29,12 +29,12 @@ public class Sample {
         this.sample_number = sample_number;
         this.material = material;
         this.weight = weight;
-        this.composite_key = create_key();
+        this.composite_key = getCompositeKey();
     }
 
-    public String create_key() {
-        return Integer.toString(area_easting) + "." + Integer.toString(area_northing)
-                + "." + Integer.toString(context_number) + "." + Integer.toString(sample_number);
+    public String getCompositeKey() {
+        return Integer.toString(area_easting) + "-" + Integer.toString(area_northing)
+                + "-" + Integer.toString(context_number) + "-" + Integer.toString(sample_number);
     }
 
     public Map<String, Object> toMap() {
