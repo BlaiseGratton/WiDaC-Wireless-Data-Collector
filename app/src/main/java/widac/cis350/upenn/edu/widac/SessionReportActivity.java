@@ -24,7 +24,7 @@ public class SessionReportActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.session_report);
 
-        currentSession = Session.getCurrentSession();
+        currentSession = Session.getCurrentSessionIDs();
         createSessionReport();
     }
 
@@ -57,21 +57,8 @@ public class SessionReportActivity extends AppCompatActivity {
 
     }
 
-    private DBEntry fakeDBcall() {
-        return  new DBEntry("12RomanVase", "Pottery", "Herculaneum", 1.233);
+    private DummyEntry fakeDBcall() {
+        return  new DummyEntry("RomanVase12", "Pottery", "Herculaneum", 1.233);
     }
 
-    private class DBEntry {
-        String ID;
-        String type; // Could define an enum for types
-        String locationData;
-        double weight; // assume in grams
-
-        DBEntry(String ID, String type, String locationData, double weight) {
-            this.ID = ID;
-            this.type = type;
-            this.locationData = locationData;
-            this.weight = weight;
-        }
-    }
 }

@@ -1,5 +1,7 @@
 package widac.cis350.upenn.edu.widac;
 
+import android.util.Log;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -11,7 +13,9 @@ import java.util.Set;
  */
 
 public class Session {
-    private static Set<String> entries = new HashSet<String>();
+    private static Set<String> entries =  new HashSet<String>();
+
+    private Session() {}
 
     public static boolean  addEntry(String id) {
         entries.add(id);
@@ -27,7 +31,17 @@ public class Session {
         return false;
     }
 
-    public static Set<String> getCurrentSession() {
+    public static Set<String> getCurrentSessionIDs() {
         return entries;
+    }
+
+    // TESTING-ONLY METHOD TO POPULATE SESSION WITH DUMMY DATA
+    public static void initalizeTest() {
+        Log.d("Session", "initializeTest: initializing");
+        entries.clear();
+        entries.add("a1");
+        entries.add("b1");
+        entries.add("a2");
+        entries.add("c1");
     }
 }
