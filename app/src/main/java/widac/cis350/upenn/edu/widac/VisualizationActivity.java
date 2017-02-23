@@ -9,6 +9,7 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -61,6 +62,7 @@ public class VisualizationActivity extends AppCompatActivity {
         // Add data to the PieChart
         PieDataSet set = new PieDataSet(entries, "Session Results");
         set.setSliceSpace(2);
+        set.setColors(ColorTemplate.VORDIPLOM_COLORS);
         PieData data = new PieData(set);
         pieChart.setData(data);
         pieChart.invalidate();
@@ -93,7 +95,7 @@ public class VisualizationActivity extends AppCompatActivity {
 
         for (String id: ids) {
             String type = types[(int)(Math.random() * 3)];
-            DummyEntry d = new DummyEntry(id, type, "DUMMY", -1);
+            DummyEntry d = new DummyEntry(id, type, "DUMMY", -1, -1);
             Log.d("Visualization", "pullFromDatabase: entry created of type: " + type);
             entries.add(d);
         }

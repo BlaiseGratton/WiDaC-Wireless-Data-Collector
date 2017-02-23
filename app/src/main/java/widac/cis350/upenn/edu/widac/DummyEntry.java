@@ -9,11 +9,13 @@ public class DummyEntry {
     String type; // Could define an enum for types
     String locationData;
     double weight; // assume in grams
+    double size;
 
-    DummyEntry(String ID, String type, String locationData, double weight) {
+    DummyEntry(String ID, String type, String locationData, double weight, double size) {
         this.ID = ID;
         this.type = type;
         this.locationData = locationData;
         this.weight = weight;
+        this.size = size;
     }
 }
