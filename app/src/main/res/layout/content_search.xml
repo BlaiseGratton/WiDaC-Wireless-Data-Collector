@@ -23,7 +23,7 @@
             android:text="Item 123"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/settings_title"
+            android:id="@+id/item_name"
             android:gravity="center_horizontal"
             android:textSize="20pt" />
 
