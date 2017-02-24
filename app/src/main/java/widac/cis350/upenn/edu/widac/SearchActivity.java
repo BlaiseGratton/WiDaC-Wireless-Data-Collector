@@ -18,12 +18,15 @@ public class SearchActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_search);
         db = new DBConnection();
         Intent i = this.getIntent();
         sample  = db.retrieveSample(i.getStringExtra("compositeKey"));
         TextView itemName = (TextView) findViewById(R.id.item_name);
         itemName.setText(sample.getCompositeKey());
-        setContentView(R.layout.activity_search);
+        TextView itemWeight = (TextView) findViewById(R.id.itemWeight);
+        String displayWeight = (sample.getWeight() == 0) ? "No Data" : "" + sample.getWeight();
+        itemWeight.setText(displayWeight);
     }
     
     public void onUpdateBluetoothButtonClick(View v) {
