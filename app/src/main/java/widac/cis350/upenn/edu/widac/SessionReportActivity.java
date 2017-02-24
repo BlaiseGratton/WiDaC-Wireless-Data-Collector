@@ -31,17 +31,19 @@ public class SessionReportActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.session_report);
 
+        // Get Session data and create table from it
         currentSession = Session.getCurrentSessionIDs();
         createSessionReport();
     }
 
     private void createSessionReport() {
-        // Goind to need to get data from current session somehow
+        // Currently pulling data from fake db
         parseEntries(fakeDBcall());
         generateStatistics();
     }
 
     private void parseEntries(Set<DummyEntry> entries) {
+        // Sort entries by type
         types.put("A", new TypeData("A"));
         types.put("B", new TypeData("B"));
         types.put("C", new TypeData("C"));
@@ -58,8 +60,6 @@ public class SessionReportActivity extends AppCompatActivity {
     private void generateStatistics() {
         int itemsCollected = 10;
 
-        // Better to store all text views as local variables, just have one textview variable that changes, or one for each?
-        // Instead make sections with drop downs that show the data?
         TextView tv = (TextView)findViewById(R.id.TotalNum);
         tv.setText("Total:" + itemsCollected);
 
@@ -69,10 +69,7 @@ public class SessionReportActivity extends AppCompatActivity {
     }
 
     private void setNumCollected() {
-        Log.d("SessionReport", "Attempt NumA");
         TextView tv = (TextView)findViewById(R.id.NumA);
-        Log.d("SessionReport", "Got NumA");
-        Log.d("SessionReport", "Test=" + types.get("A"));
         tv.setText("" + types.get("A").num);
         tv = (TextView)findViewById(R.id.NumB);
         tv.setText("" + types.get("B").num);
@@ -182,13 +179,15 @@ public class SessionReportActivity extends AppCompatActivity {
         }
 
         void addInstance(DummyEntry d) {
-            Log.d("SessionReport", "Before Instance: Type=" + type + ", wt=" + avgWt + ", sz=" + avgSize + ", num=" + num);
+            Log.d("SessionReport", "Before Instance: Type=" + type + ", wt=" + avgWt +
+                    ", sz=" + avgSize + ", num=" + num);
             avgWt = ((avgWt * num) + d.weight)/(num + 1);
             avgSize = ((avgSize * num) + d.size) / (num + 1);
             instances.add(d);
             num++;
             changed = true;
-            Log.d("SessionReport", "Added Instance: Type=" + type + ", wt=" + avgWt + ", sz=" + avgSize + ", num=" + num);
+            Log.d("SessionReport", "Added Instance: Type=" + type + ", wt=" + avgWt +
+                    ", sz=" + avgSize + ", num=" + num);
         }
 
         double stdDevWeight() {
@@ -219,6 +218,5 @@ public class SessionReportActivity extends AppCompatActivity {
             devSize = Math.sqrt(devSize);
             changed = false;
         }
-
     }
 }
