@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import widac.cis350.upenn.edu.widac.models.Sample;
+
 public class VisualizationActivity extends AppCompatActivity {
     PieChart pieChart;
     Map<String, Integer> chartData = new HashMap<String, Integer>();
@@ -44,10 +46,8 @@ public class VisualizationActivity extends AppCompatActivity {
     // Build a chart showing the various pieces collected during the current session
     private void createChart() {
         Log.d("VisualizationActivity", "createChart");
-        // Get the session information and use it pull from DB
-        Set<String> ids = Session.getCurrentSessionIDs();
-        Set<DummyEntry> artifacts = pullFromDatabase(ids);
-        parseArtifacts(artifacts);
+        // Create generic interface in the future
+        parseArtifacts(Session.pullFromDB());
 
         List<PieEntry> entries = new ArrayList<>();
 
@@ -68,16 +68,16 @@ public class VisualizationActivity extends AppCompatActivity {
         pieChart.invalidate();
     }
 
-    private void parseArtifacts(Set<DummyEntry> artifacts) {
+    private void parseArtifacts(Set<Sample> artifacts) {
         Log.d("VisualizationActivity", "parseArtifacts: " + artifacts.size());
 
-        Iterator<DummyEntry> i = artifacts.iterator();
+        Iterator<Sample> i = artifacts.iterator();
         while (i.hasNext()) {
-            DummyEntry d = i.next();
-            if (chartData.containsKey(d.type)) {
-                chartData.put(d.type, chartData.get(d.type) + 1);
+            Sample d = i.next();
+            if (chartData.containsKey(d.getMaterial())) {
+                chartData.put(d.getMaterial(), chartData.get(d.getMaterial()) + 1);
             } else {
-                chartData.put(d.type, 1);
+                chartData.put(d.getMaterial(), 1);
             }
         }
     }

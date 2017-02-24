@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import widac.cis350.upenn.edu.widac.models.Sample;
+
 /**
  * Created by J. Patrick Taggart on 2/17/2017.
  * ===================================================
@@ -25,6 +27,7 @@ import java.util.Set;
 public class SessionReportActivity extends AppCompatActivity {
     private Set<String> currentSession; // List of ids
     private Map<String, TypeData> types = new HashMap<String, TypeData>();
+    DBConnection DBC = new DBConnection();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,17 +35,26 @@ public class SessionReportActivity extends AppCompatActivity {
         setContentView(R.layout.session_report);
 
         // Get Session data and create table from it
+        Session.initalizeTest();
         currentSession = Session.getCurrentSessionIDs();
         createSessionReport();
     }
 
     private void createSessionReport() {
         // Currently pulling data from fake db
-        parseEntries(fakeDBcall());
+        parseEntries(pullFromDB());
         generateStatistics();
     }
 
-    private void parseEntries(Set<DummyEntry> entries) {
+    private Set<Sample> pullFromDB() {
+        Set<Sample> samples = new HashSet<Sample>();
+        for (String id: currentSession) {
+            samples.add(DBC.retrieveSample(id));
+        }
+        return samples;
+    }
+
+    private void parseEntries(Set<Sample> entries) {
         // Sort entries by type
         types.put("A", new TypeData("A"));
         types.put("B", new TypeData("B"));
@@ -50,9 +62,9 @@ public class SessionReportActivity extends AppCompatActivity {
         types.put("D", new TypeData("D"));
         types.put("E", new TypeData("E"));
 
-        for (DummyEntry e: entries) {
-            Log.d("SessionReport", "Creating entry of type: " + e.type);
-            types.get(e.type).addInstance(e);
+        for (Sample e: entries) {
+            Log.d("SessionReport", "Creating entry of type: " + e.getMaterial());
+            types.get(e.getMaterial()).addInstance(e);
         }
     }
 
@@ -150,25 +162,25 @@ public class SessionReportActivity extends AppCompatActivity {
         double devWt;
         double devSize;
         boolean changed = false;
-        Set<DummyEntry> instances;
+        Set<Sample> instances;
 
         TypeData() {
-            instances = new HashSet<DummyEntry>();
+            instances = new HashSet<Sample>();
         }
 
         TypeData(String type) {
             this.type = type;
-            instances = new HashSet<DummyEntry>();
+            instances = new HashSet<Sample>();
         }
-        TypeData(String type, Set<DummyEntry> instances) {
+        TypeData(String type, Set<Sample> instances) {
             this.type = type;
             this.instances = instances;
 
             double wt = 0, sz = 0;
             if (!instances.isEmpty()) {
-                for (DummyEntry d: instances) {
-                    wt += d.weight;
-                    sz += d.size;
+                for (Sample d: instances) {
+                    wt += d.getWeight();
+                    sz += d.getSize();
                 }
 
                 num = instances.size();
@@ -178,11 +190,11 @@ public class SessionReportActivity extends AppCompatActivity {
             changed = true;
         }
 
-        void addInstance(DummyEntry d) {
+        void addInstance(Sample d) {
             Log.d("SessionReport", "Before Instance: Type=" + type + ", wt=" + avgWt +
                     ", sz=" + avgSize + ", num=" + num);
-            avgWt = ((avgWt * num) + d.weight)/(num + 1);
-            avgSize = ((avgSize * num) + d.size) / (num + 1);
+            avgWt = ((avgWt * num) + d.getWeight())/(num + 1);
+            avgSize = ((avgSize * num) + d.getSize()) / (num + 1);
             instances.add(d);
             num++;
             changed = true;
@@ -209,9 +221,9 @@ public class SessionReportActivity extends AppCompatActivity {
         private void recalculate() {
             devWt = 0;
             devSize = 0;
-            for (DummyEntry d: instances) {
-                devWt += Math.pow(avgWt - d.weight, 2);
-                devSize += Math.pow(avgSize - d.size, 2);
+            for (Sample d: instances) {
+                devWt += Math.pow(avgWt - d.getWeight(), 2);
+                devSize += Math.pow(avgSize - d.getSize(), 2);
             }
 
             devWt = Math.sqrt(devWt);

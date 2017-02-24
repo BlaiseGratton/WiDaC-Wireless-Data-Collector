@@ -5,6 +5,8 @@ import android.util.Log;
 import java.util.HashSet;
 import java.util.Set;
 
+import widac.cis350.upenn.edu.widac.models.Sample;
+
 /**
  * Created by J. Patrick Taggart on 2/17/2017.
  * =============================================
@@ -13,6 +15,7 @@ import java.util.Set;
  */
 
 public class Session {
+    private static DBConnection DBC = new DBConnection();
     private static Set<String> entries =  new HashSet<String>();
 
     private Session() {}
@@ -31,6 +34,14 @@ public class Session {
         return false;
     }
 
+    public static Set<Sample> pullFromDB() {
+        Set<Sample> samples = new HashSet<Sample>();
+        for (String id: entries) {
+            samples.add(DBC.retrieveSample(id));
+        }
+        return samples;
+    }
+
     public static Set<String> getCurrentSessionIDs() {
         return entries;
     }
@@ -43,5 +54,13 @@ public class Session {
         entries.add("b1");
         entries.add("a2");
         entries.add("c1");
+        entries.add("x1");
+        entries.add("e1");
+        entries.add("r2");
+        entries.add("t1");
+        entries.add("y1");
+        entries.add("u1");
+        entries.add("i2");
+        entries.add("o1");
     }
 }
