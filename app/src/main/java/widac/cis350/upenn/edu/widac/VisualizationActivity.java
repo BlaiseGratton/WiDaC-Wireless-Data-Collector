@@ -62,7 +62,13 @@ public class VisualizationActivity extends AppCompatActivity {
         // Add data to the PieChart
         PieDataSet set = new PieDataSet(entries, "Session Results");
         set.setSliceSpace(2);
-        set.setColors(ColorTemplate.VORDIPLOM_COLORS);
+        //set.setColors(ColorTemplate.VORDIPLOM_COLORS);
+        //int color = getResources().getColor(R.color.chartColor);
+        set.setColors(new int[] {getResources().getColor(android.R.color.holo_blue_dark),
+                                 getResources().getColor(android.R.color.holo_green_dark),
+                                 getResources().getColor(android.R.color.holo_orange_dark),
+                                 getResources().getColor(android.R.color.holo_red_dark),
+                                 getResources().getColor(android.R.color.holo_purple)});
         PieData data = new PieData(set);
         pieChart.setData(data);
         pieChart.invalidate();
