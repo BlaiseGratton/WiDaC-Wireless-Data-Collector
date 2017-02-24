@@ -30,4 +30,20 @@ public class SearchActivity extends AppCompatActivity {
         ((TextView)findViewById(R.id.itemWeight)).setText("Weight: " + newWeight + "g");
         Toast.makeText(this, "Weight updated", Toast.LENGTH_LONG).show();
     }
+
+    public void onPrevButtonClick(View v) {
+        TextView itemName = (TextView) findViewById(R.id.item_name);
+        //String prevName = itemName.getText().toString();
+        itemName.setText("Item 122");
+        TextView weightText = (TextView) findViewById(R.id.itemWeight);
+        weightText.setText("Weight: 121g");
+    }
+
+    public void onNextButtonClick(View v) {
+        TextView itemName = (TextView) findViewById(R.id.item_name);
+        //String prevName = itemName.getText().toString();
+        itemName.setText("Item 124");
+        TextView weightText = (TextView) findViewById(R.id.itemWeight);
+        weightText.setText("Weight: 235g");
+    }
 }
