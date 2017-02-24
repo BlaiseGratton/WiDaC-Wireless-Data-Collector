@@ -16,19 +16,21 @@ public class Sample {
     String composite_key;
     String material;
     double weight;
+    double size;
 
     public Sample() {
         // Default constructor required for Firebase operations
     }
 
     public Sample(int area_easting, int area_northing, int context_number, int sample_number,
-                  String material, double weight) {
+                  String material, double weight, double size) {
         this.area_easting = area_easting;
         this.area_northing = area_northing;
         this.context_number = context_number;
         this.sample_number = sample_number;
         this.material = material;
         this.weight = weight;
+        this.size = size;
         this.composite_key = getCompositeKey();
     }
 
@@ -45,7 +47,17 @@ public class Sample {
         result.put("sample_number", sample_number);
         result.put("material", material);
         result.put("weight", weight);
+        result.put("size", size);
 
         return result;
     }
+
+    public int getArea_easting() { return area_easting; };
+    public int getArea_northing() { return area_northing; };
+    public int getContext_number() {return  context_number; };
+    public int getSample_number() { return sample_number; };
+
+    public String getMaterial() { return material; };
+    public double getWeight() { return weight; };
+    public double getSize() { return  size; };
 }

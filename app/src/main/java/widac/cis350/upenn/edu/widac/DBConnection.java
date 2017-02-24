@@ -1,5 +1,10 @@
 package widac.cis350.upenn.edu.widac;
 
+import android.util.Log;
+
+import java.util.HashSet;
+import java.util.Set;
+
 import widac.cis350.upenn.edu.widac.models.Sample;
 
 /**
@@ -23,7 +28,12 @@ public class DBConnection {
     }
 
     public Sample retrieveSample(String compositeKey) {
-            return new Sample(344, 120, 1, 2, "ceramic", 0.002);
+        Log.d("DBConnection", "Retrieving sample");
+
+        String[] types = {"A", "B", "C", "D", "E"};
+        String type = types[(int)(Math.random() * types.length)];
+        Log.d("DBConnection", "Type: " + type);
+        return new Sample((int)(Math.random() * 1000), (int)(Math.random() * 1000), -1, -1, type, Math.random() * 2, Math.random() * 4);
     }
 
 }
