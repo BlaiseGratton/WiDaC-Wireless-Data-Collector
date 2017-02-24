@@ -14,6 +14,7 @@ public class SearchActivity extends AppCompatActivity {
     
     private Sample sample;
     DBConnection db;
+    private int itemNumber;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +28,8 @@ public class SearchActivity extends AppCompatActivity {
         TextView itemWeight = (TextView) findViewById(R.id.itemWeight);
         String displayWeight = (sample.getWeight() == 0) ? "No Data" : "" + sample.getWeight();
         itemWeight.setText(displayWeight);
+
+        itemNumber = 123;
     }
     
     public void onUpdateBluetoothButtonClick(View v) {
