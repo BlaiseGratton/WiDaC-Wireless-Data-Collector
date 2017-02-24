@@ -8,10 +8,6 @@ import widac.cis350.upenn.edu.widac.models.Sample;
 
 public class DBConnection {
 
-    public DBConnection() {
-
-    }
-
     public void addNewSample(Sample newSample) {
 //        Sample newSample = new Sample(344, 120, 1, 2, "ceramic", 0.002);
     }
