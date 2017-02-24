@@ -10,30 +10,32 @@ import android.view.View;
 import android.widget.Spinner;
 
 public class MainActivity extends AppCompatActivity {
-
+    
+    public final static String COMPOSITE_KEY = "compositeKey";
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
     }
-
+    
     public void onSearchButtonClick(View v) {
         Intent i = new Intent(this, SearchActivity.class);
+        String queryKey = findViewById(R.id.searchBox).toString();
+        i.putExtra(COMPOSITE_KEY, queryKey);
         startActivityForResult(i, 1);
     }
-
+    
     public void onSettingsButtonClick(View v) {
         Intent i = new Intent(this, SettingsActivity.class);
         startActivityForResult(i, 1);
     }
-
+    
     public void onVisualizationButtonClick(View v) {
         Intent i = new Intent(this, VisualizationActivity.class);
         startActivityForResult(i, 1);
     }
-
+    
     public void onSessionReportButtonClick(View v) {
         Intent i = new Intent(this, SessionReportActivity.class);
         startActivityForResult(i, 1);
