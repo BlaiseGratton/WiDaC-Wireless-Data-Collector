@@ -11,7 +11,7 @@
         android:shrinkColumns="*"
         android:stretchColumns="*">
         <TableRow
-            android:id="@+id/tableRow4"
+            android:id="@+id/titleRow"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
             android:gravity="center_horizontal">
@@ -54,8 +54,8 @@
                 android:textStyle="bold"
                 android:typeface="serif"></TextView>
             <TextView
-                android:text="TypeE"
-                android:id="@+id/textView1"
+                android:id="@+id/TypeE"
+                android:text="Type E"
                 android:textStyle="bold"
                 android:typeface="serif"></TextView>
         </TableRow>
@@ -90,7 +90,7 @@
         </TableRow>
         <TableRow
             android:layout_height="wrap_content"
-            android:id="@+id/tableRow2"
+            android:id="@+id/tableRow3"
             android:layout_width="match_parent">
             <TextView
                 android:text="Average Size"
@@ -119,7 +119,7 @@
         </TableRow>
         <TableRow
             android:layout_height="wrap_content"
-            android:id="@+id/tableRow2"
+            android:id="@+id/tableRow4"
             android:layout_width="match_parent">
             <TextView
                 android:text="Std. Deviation"
@@ -148,7 +148,7 @@
         </TableRow>
         <TableRow
             android:layout_height="wrap_content"
-            android:id="@+id/tableRow2"
+            android:id="@+id/tableRow5"
             android:layout_width="match_parent">
             <TextView
                 android:text="Average Weight"
@@ -177,7 +177,7 @@
         </TableRow>
         <TableRow
             android:layout_height="wrap_content"
-            android:id="@+id/tableRow2"
+            android:id="@+id/tableRow6"
             android:layout_width="match_parent">
             <TextView
                 android:text="Std. Deviation"
