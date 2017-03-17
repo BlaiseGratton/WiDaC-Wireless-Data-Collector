@@ -20,9 +20,15 @@ public class SearchActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
-        db = new DBConnection();
+
+        // Create new intent
         Intent i = this.getIntent();
-        sample  = db.retrieveSample(i.getStringExtra("compositeKey"));
+
+        // Pull from database
+        sample = Session.pullNewEntryFromDB(i.getStringExtra(("compositeKey")));
+        // sample  = db.retrieveSample(i.getStringExtra("compositeKey"));
+
+        // Update
         TextView itemName = (TextView) findViewById(R.id.item_name);
         itemName.setText(sample.getCompositeKey());
         TextView itemWeight = (TextView) findViewById(R.id.itemWeight);

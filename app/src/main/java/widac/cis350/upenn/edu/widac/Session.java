@@ -34,6 +34,13 @@ public class Session {
         return false;
     }
 
+    // Pull an entry from the database
+    public static Sample pullNewEntryFromDB(String id) {
+        // add entry to current session and return data
+        entries.add(id);
+        return DBC.retrieveSample(id);
+    }
+
     public static Set<Sample> pullFromDB() {
         Set<Sample> samples = new HashSet<Sample>();
         for (String id: entries) {
