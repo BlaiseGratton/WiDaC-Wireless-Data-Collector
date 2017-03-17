@@ -2,7 +2,10 @@ package widac.cis350.upenn.edu.widac;
 
 import android.util.Log;
 
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import widac.cis350.upenn.edu.widac.models.Sample;
@@ -17,9 +20,27 @@ import widac.cis350.upenn.edu.widac.models.Sample;
 public class Session {
     private static DBConnection DBC = new DBConnection();
     private static Set<String> entries =  new HashSet<String>();
+    private static List<Set<String>> pastSessions = new LinkedList<Set<String>>();
 
     private Session() {}
 
+    /*
+        Session instance methods
+     */
+    public static void newSession() {
+        entries.clear();
+    }
+
+    // Return an unmodifiable of all session created during current use
+    public static List<Set<String>> getPastSessions() {
+        return Collections.unmodifiableList(pastSessions);
+    }
+
+    // Add method for switching to a past session?
+
+    /*
+        ENTRY METHODS
+     */
     public static boolean  addEntry(String id) {
         entries.add(id);
         return true;
@@ -34,13 +55,19 @@ public class Session {
         return false;
     }
 
-    // Pull an entry from the database
-    public static Sample pullNewEntryFromDB(String id) {
-        // add entry to current session and return data
-        entries.add(id);
-        return DBC.retrieveSample(id);
+    public static Set<String> getCurrentSessionIDs() { // Consider rename to getCurrentSession
+        return entries;
     }
 
+    /*
+        DATABASE INTERACTIONS
+     */
+    // CHANGING CONNECTIOn
+    public static DBConnection getDBC() { return DBC; };
+    public static void changeDBC(String newDBC) {
+        // Somehow update DBC
+    }
+    // PULLING METHODS
     public static Set<Sample> pullFromDB() {
         Set<Sample> samples = new HashSet<Sample>();
         for (String id: entries) {
@@ -49,10 +76,13 @@ public class Session {
         return samples;
     }
 
-    public static Set<String> getCurrentSessionIDs() {
-        return entries;
+    // Pull an entry from the database
+    public static Sample pullNewEntryFromDB(String id) {
+        // add entry to current session and return data
+        entries.add(id);
+        return DBC.retrieveSample(id);
     }
-
+    // *********************************************************************************************
     // TESTING-ONLY METHOD TO POPULATE SESSION WITH DUMMY DATA
     public static void initalizeTest() {
         Log.d("Session", "initializeTest: initializing");
