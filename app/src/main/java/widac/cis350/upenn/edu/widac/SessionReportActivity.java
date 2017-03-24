@@ -35,14 +35,15 @@ public class SessionReportActivity extends AppCompatActivity {
         setContentView(R.layout.session_report);
 
         // Get Session data and create table from it
-        Session.initalizeTest();
+        // Session.initalizeTest();
         currentSession = Session.getCurrentSessionIDs();
         createSessionReport();
     }
 
     private void createSessionReport() {
         // Currently pulling data from fake db
-        parseEntries(pullFromDB());
+        // parseEntries(pullFromDB());
+        parseEntries(Session.pullFromDB());
         generateStatistics();
     }
 

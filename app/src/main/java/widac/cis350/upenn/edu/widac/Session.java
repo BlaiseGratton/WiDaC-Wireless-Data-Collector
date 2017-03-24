@@ -20,7 +20,7 @@ import widac.cis350.upenn.edu.widac.models.Sample;
 public class Session {
     private static DBConnection DBC = new DBConnection();
     private static Set<String> entries =  new HashSet<String>();
-    private static List<Set<String>> pastSessions = new LinkedList<Set<String>>();
+    // private static List<Set<String>> pastSessions = new LinkedList<Set<String>>();
 
     private Session() {}
 
@@ -32,9 +32,9 @@ public class Session {
     }
 
     // Return an unmodifiable of all session created during current use
-    public static List<Set<String>> getPastSessions() {
-        return Collections.unmodifiableList(pastSessions);
-    }
+    //public static List<Set<String>> getPastSessions() {
+    //    return Collections.unmodifiableList(pastSessions);
+    //}
 
     // Add method for switching to a past session?
 
@@ -62,7 +62,7 @@ public class Session {
     /*
         DATABASE INTERACTIONS
      */
-    // CHANGING CONNECTIOn
+    // CHANGING CONNECTION
     public static DBConnection getDBC() { return DBC; };
     public static void changeDBC(String newDBC) {
         // Somehow update DBC
@@ -80,6 +80,8 @@ public class Session {
     public static Sample pullNewEntryFromDB(String id) {
         // add entry to current session and return data
         entries.add(id);
+        Log.d("Session", "Id: " + id);
+        Log.d("Session", "Session size: " + entries.size());
         return DBC.retrieveSample(id);
     }
     // *********************************************************************************************
