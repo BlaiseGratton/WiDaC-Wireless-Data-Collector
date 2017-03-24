@@ -70,6 +70,7 @@ public class Session {
     // PULLING METHODS
     public static Set<Sample> pullFromDB() {
         Set<Sample> samples = new HashSet<Sample>();
+        // Check for elements that were deleted?
         for (String id: entries) {
             samples.add(DBC.retrieveSample(id));
         }
@@ -79,10 +80,15 @@ public class Session {
     // Pull an entry from the database
     public static Sample pullNewEntryFromDB(String id) {
         // add entry to current session and return data
-        entries.add(id);
         Log.d("Session", "Id: " + id);
         Log.d("Session", "Session size: " + entries.size());
-        return DBC.retrieveSample(id);
+
+        // Add sample to session if exists
+        Sample s = DBC.retrieveSample(id);
+        if (s != null) {
+            entries.add(id);
+        }
+        return s;
     }
     // *********************************************************************************************
     // TESTING-ONLY METHOD TO POPULATE SESSION WITH DUMMY DATA

@@ -35,7 +35,7 @@ public class VisualizationActivity extends AppCompatActivity {
         /**
          * TESTING METHOD
          **/
-        Session.initalizeTest();
+        //Session.initalizeTest();
         /**
          * Keep
          **/
