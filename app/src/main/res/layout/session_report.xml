@@ -35,27 +35,27 @@
                 android:text=""></TextView>
             <TextView
                 android:id="@+id/TypeA"
-                android:text="Type A"
+                android:text="Glass"
                 android:textStyle="bold"
                 android:typeface="serif"></TextView>
             <TextView
                 android:id="@+id/TypeB"
-                android:text="Type B"
+                android:text="Ceramic"
                 android:textStyle="bold"
                 android:typeface="serif"></TextView>
             <TextView
                 android:id="@+id/TypeC"
-                android:text="Type C"
+                android:text="Metal"
                 android:textStyle="bold"
                 android:typeface="serif"></TextView>
             <TextView
                 android:id="@+id/TypeD"
-                android:text="Type D"
+                android:text="Stone"
                 android:textStyle="bold"
                 android:typeface="serif"></TextView>
             <TextView
                 android:id="@+id/TypeE"
-                android:text="Type E"
+                android:text="Organic"
                 android:textStyle="bold"
                 android:typeface="serif"></TextView>
         </TableRow>
