@@ -2,12 +2,10 @@ package widac.cis350.upenn.edu.widac;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+
 import android.view.View;
-import android.widget.Spinner;
+import android.widget.EditText;
 
 public class MainActivity extends AppCompatActivity {
     
@@ -20,9 +18,12 @@ public class MainActivity extends AppCompatActivity {
     }
     
     public void onSearchButtonClick(View v) {
+
         Intent i = new Intent(this, SearchActivity.class);
-        String queryKey = findViewById(R.id.searchBox).toString();
-        i.putExtra(COMPOSITE_KEY, queryKey);
+        EditText editText = (EditText) findViewById(R.id.searchBox);
+        String queryKey = editText.getText().toString();
+        //i.putExtra(COMPOSITE_KEY, queryKey);
+        i.putExtra("id", queryKey);
         startActivityForResult(i, 1);
     }
     

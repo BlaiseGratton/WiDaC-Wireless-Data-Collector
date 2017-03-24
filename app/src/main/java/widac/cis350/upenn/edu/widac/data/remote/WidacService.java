@@ -12,6 +12,8 @@ import widac.cis350.upenn.edu.widac.models.Sample;
 
 public interface WidacService {
 
-    @GET("/widac/api/v1.0/samples/{composite_key}")
-    Call<Sample> retrieveSample(@Path("composite_key") String composite_key);
+    final String ENDPOINT = "https://widac-db-service.herokuapp.com";
+
+    @GET("/widac/api/v1.0/sample/{id}")
+    Call<Sample> getSample(@Path("id") String id);
 }
