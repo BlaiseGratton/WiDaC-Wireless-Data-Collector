@@ -9,8 +9,9 @@
     <string name="title_activity_search">SearchActivity</string>
     <string name="title_activity_settings">SettingsActivity</string>
     <string name="curr_connected">Currently connected to:</string>
-    <string name="update_bluetooth">Update Weight from Bluetooth</string>
-    <string name="update_manual">Update Weight Manually</string>
+    <string name="update_bluetooth">Bluetooth</string>
+    <string name="update_manual">Manual</string>
     <string name="prompt_weight">Enter new weight</string>
     <string name="sessionReport">Session Report</string>
+    <string name="update_weight">Select a method to update weight:</string>
 </resources>
