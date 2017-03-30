@@ -1,8 +1,10 @@
 package widac.cis350.upenn.edu.widac;
 
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -22,6 +24,7 @@ import java.util.UUID;
 public class MyBluetoothService {
     private static final String TAG = "WiDaC DEBUG";
     private Handler mHandler; // handler that gets info from Bluetooth service
+    Context context;
 
     // Defines several constants used when transmitting messages between the
     // service and the UI.
@@ -33,16 +36,21 @@ public class MyBluetoothService {
         // ... (Add other message types here as needed.)
     }
 
-    public void runService() {
-        AcceptThread acceptThread = new AcceptThread();
-        acceptThread.run();
+    public MyBluetoothService(Context context) {
+        this.context = context;
+        Toast.makeText(context, "here 1", Toast.LENGTH_SHORT).show();
+    }
+
+    public void runService(UUID uuid) {
+        AcceptThread acceptThread = new AcceptThread(uuid);
+        //acceptThread.run();
     }
 
     private class AcceptThread extends Thread {
         private final BluetoothServerSocket mmServerSocket;
         private final int REQUEST_ENABLE_BT = 1;
 
-        public AcceptThread() {
+        public AcceptThread(UUID uuid) {
 
             BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
             if (mBluetoothAdapter == null) {
@@ -61,23 +69,50 @@ public class MyBluetoothService {
             // Use a temporary object that is later assigned to mmServerSocket
             // because mmServerSocket is final.
             BluetoothServerSocket tmp = null;
-            UUID MY_UUID = UUID.randomUUID();
+
+            UUID DEFAULT_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+
             try {
-                // MY_UUID is the app's UUID string, also used by the client code.
-                tmp = mBluetoothAdapter.listenUsingRfcommWithServiceRecord("WiDaC", MY_UUID);
-            } catch (IOException e) {
-                Log.e(TAG, "Socket's listen() method failed", e);
+                // Use the UUID of the device that discovered // TODO Maybe need extra device object
+                if (uuid != null)
+                {
+                    tmp = mBluetoothAdapter.listenUsingRfcommWithServiceRecord("WiDaC", uuid);
+                    Toast.makeText(context, "worked!!!", Toast.LENGTH_SHORT).show();
+                }
+            } catch (NullPointerException e)
+            {
+                try {
+                    tmp = mBluetoothAdapter.listenUsingRfcommWithServiceRecord("WiDaC", DEFAULT_UUID);
+                } catch (IOException e1) {
+                    Toast.makeText(context, "socket listen failed", Toast.LENGTH_SHORT).show();
+                }
             }
+            catch (IOException e) { Toast.makeText(context, "socket listen failed", Toast.LENGTH_SHORT).show(); }
+
             mmServerSocket = tmp;
+            if (tmp == null) {
+                Toast.makeText(context, "NULL!!", Toast.LENGTH_SHORT).show();
+            }
+
+            try {
+                BluetoothSocket socket = mmServerSocket.accept();
+            } catch (IOException e) {
+                Toast.makeText(context, "XDDD", Toast.LENGTH_SHORT).show();
+            }
+
+            Toast.makeText(context, "here 2", Toast.LENGTH_SHORT).show();
         }
 
         public void run() {
             BluetoothSocket socket = null;
             // Keep listening until exception occurs or a socket is returned.
-            while (true) {
+            Toast.makeText(context, "here 3", Toast.LENGTH_SHORT).show();
+            for (int count = 0; count < 20; count++) {
                 try {
+                    Toast.makeText(context, "socket accepted", Toast.LENGTH_SHORT).show();
                     socket = mmServerSocket.accept();
                 } catch (IOException e) {
+                    Toast.makeText(context, "socket failed to accept", Toast.LENGTH_SHORT).show();
                     Log.e(TAG, "Socket's accept() method failed", e);
                     break;
                 }
@@ -85,8 +120,9 @@ public class MyBluetoothService {
                 if (socket != null) {
                     // A connection was accepted. Perform work associated with
                     // the connection in a separate thread.
+                    Toast.makeText(context, "try to make connectedthread", Toast.LENGTH_SHORT).show();
                     ConnectedThread connectedThread = new ConnectedThread(socket);
-                    connectedThread.run();
+                    //connectedThread.run();
                     this.cancel();
                     break;
                 }
@@ -129,28 +165,33 @@ public class MyBluetoothService {
 
             mmInStream = tmpIn;
             mmOutStream = tmpOut;
+
+            Toast.makeText(context, "here 4", Toast.LENGTH_SHORT).show();
         }
 
         public void run() {
             mmBuffer = new byte[1024];
             int numBytes; // bytes returned from read()
 
+            Toast.makeText(context, "here 5", Toast.LENGTH_SHORT).show();
+
             // Keep listening to the InputStream until an exception occurs.
-            while (true) {
+            //while (true) {
                 try {
                     // Read from the InputStream.
                     numBytes = mmInStream.read(mmBuffer);
-                    Log.d(TAG, "BYTES: " + Integer.toString(numBytes));
+                    //Log.d(TAG, "BYTES: " + Integer.toString(numBytes));
                     // Send the obtained bytes to the UI activity.
                     /*Message readMsg = mHandler.obtainMessage(
                             MessageConstants.MESSAGE_READ, numBytes, -1,
                             mmBuffer);*/
                     //readMsg.sendToTarget();
+                    Toast.makeText(context, Integer.toString(numBytes), Toast.LENGTH_SHORT).show();
                 } catch (IOException e) {
                     Log.d(TAG, "Input stream was disconnected", e);
-                    break;
+                    //break;
                 }
-            }
+            //}
         }
 
         // Call this from the main activity to send data to the remote device.
