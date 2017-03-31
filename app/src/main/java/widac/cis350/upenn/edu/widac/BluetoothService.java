@@ -66,6 +66,7 @@ public class BluetoothService {
                     Log.i(TAG, "Device UUID: " + mmDevice.getUuids()[0].getUuid());
                     //tmp = device.createInsecureRfcommSocketToServiceRecord(mmDevice.getUuids()[0].getUuid());
                     try {
+                        // MAGIC CODE: http://stackoverflow.com/a/3397739
                         Method m = device.getClass().getMethod("createRfcommSocket", new Class[] {int.class});
                         tmp = (BluetoothSocket) m.invoke(device, 1);
                         Toast.makeText(context, "ayy", Toast.LENGTH_SHORT).show();
