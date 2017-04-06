@@ -3,6 +3,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import widac.cis350.upenn.edu.widac.models.Sample;
+
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -12,6 +15,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.content.Intent;
 
+import java.util.Set;
+
 import static java.security.AccessController.getContext;
 
 public class SearchActivity extends AppCompatActivity {
@@ -19,6 +24,8 @@ public class SearchActivity extends AppCompatActivity {
     private Sample sample;
     DBConnection db;
     private int itemNumber;
+    BluetoothService bluetoothService;
+    BluetoothDevice device;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,18 +54,34 @@ public class SearchActivity extends AppCompatActivity {
         Session.asyncPullNewEntry(i.getStringExtra("id"), sampleCallback);
 
         itemNumber = 123;
+
+        if (bluetoothService != null) {
+            bluetoothService.closeThread();
+        }
+        bluetoothService = null;
+        device = null;
+
+        String scaleAddress = "0F:03:14:0A:03:9B";
+        String scaleName = "nutriscale_1910";
+
+        Set<BluetoothDevice> pairedDevices = BluetoothAdapter.getDefaultAdapter().getBondedDevices();
+        if (pairedDevices.size() > 0) {
+            // There are paired devices. Get the name and address of each paired device.
+            for (BluetoothDevice device : pairedDevices) {
+                String deviceName = device.getName();
+                String deviceHardwareAddress = device.getAddress(); // MAC address
+                if (deviceHardwareAddress.equals(scaleAddress)) {
+                    this.device = device;
+                    bluetoothService = new BluetoothService(this);
+                }
+            }
+        }
     }
     
     public void onUpdateBluetoothButtonClick(View v) {
         ((TextView)findViewById(R.id.itemWeight)).setText("Weight: 234g");
-        Toast.makeText(this, "Weight updated", Toast.LENGTH_LONG).show();
-    }
-    
-    public void onUpdateManualButtonClick(View v) {
-        EditText editText = (EditText) findViewById(R.id.new_weight);
-        String newWeight = editText.getText().toString();
-        ((TextView)findViewById(R.id.itemWeight)).setText("Weight: " + newWeight + "g");
-        Toast.makeText(this, "Weight updated", Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, "Weight updated", Toast.LENGTH_LONG).show();
+        runBluetooth();
     }
 
     public void onPrevButtonClick(View v) {
@@ -75,6 +98,14 @@ public class SearchActivity extends AppCompatActivity {
         itemName.setText("Item 124");
         TextView weightText = (TextView) findViewById(R.id.itemWeight);
         weightText.setText("Weight: 235g");
+    }
+
+    public void runBluetooth() {
+
+
+        bluetoothService.runService(device);
+        TextView weightText = (TextView) findViewById(R.id.itemWeight);
+        weightText.setText("Weight: " + BluetoothService.currWeight + "g");
     }
 
     Callback sampleCallback = new Callback<Sample>(){

@@ -72,24 +72,6 @@
             android:textSize="12pt"
             android:id="@+id/itemWeight" />
 
-        <EditText
-            android:id="@+id/new_weight"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/prompt_weight"
-            android:inputType="text"
-            android:maxLines="1" />
-
-        <Button
-            android:id="@+id/update_manual"
-            style="?android:textAppearanceSmall"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:onClick="onUpdateManualButtonClick"
-            android:text="@string/update_manual"
-            android:textStyle="bold" />
-
         <Button
             android:id="@+id/update_bluetooth"
             style="?android:textAppearanceSmall"

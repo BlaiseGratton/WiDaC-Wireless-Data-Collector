@@ -25,29 +25,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Session.newSession();
-
-        String scaleAddress = "0F:03:14:0A:03:9B";
-        String scaleName = "nutriscale_1910";
-
-        Set<BluetoothDevice> pairedDevices = BluetoothAdapter.getDefaultAdapter().getBondedDevices();
-
-        if (pairedDevices.size() > 0) {
-            // There are paired devices. Get the name and address of each paired device.
-            for (BluetoothDevice device : pairedDevices) {
-                String deviceName = device.getName();
-                String deviceHardwareAddress = device.getAddress(); // MAC address
-                //Toast.makeText(this, deviceName + " " + deviceHardwareAddress, Toast.LENGTH_LONG).show();
-                if (deviceHardwareAddress.equals(scaleAddress)) {
-
-                    BluetoothService bluetoothService = new BluetoothService(this);
-                    bluetoothService.runService(device);
-
-                    //MyBluetoothService bluetoothService = new MyBluetoothService(this);
-                    //Toast.makeText(this, device.getUuids()[0].getUuid().toString(), Toast.LENGTH_LONG).show();
-                    //bluetoothService.runService(device.getUuids()[0].getUuid());
-                }
-            }
-        }
     }
 
     public void onSearchButtonClick(View v) {

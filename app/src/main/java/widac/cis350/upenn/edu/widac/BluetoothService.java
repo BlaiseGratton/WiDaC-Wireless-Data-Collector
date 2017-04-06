@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -17,6 +18,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.util.UUID;
+
+import widac.cis350.upenn.edu.widac.models.BluetoothHelper;
 
 /**
  * Created by Matt on 3/29/2017.
@@ -26,6 +29,8 @@ public class BluetoothService {
     private static final String TAG = "WiDaC DEBUG";
     private Handler mHandler; // handler that gets info from Bluetooth service
     Context context;
+    public static ConnectedThread connectedThread = null;
+    public static int currWeight;
 
     // Defines several constants used when transmitting messages between the
     // service and the UI.
@@ -42,8 +47,17 @@ public class BluetoothService {
     }
 
     public void runService(BluetoothDevice device) {
-        ConnectThread connectThread = new ConnectThread(device);
-        connectThread.run();
+        Toast.makeText(context, Boolean.toString(connectedThread == null), Toast.LENGTH_SHORT).show();
+        if (connectedThread == null) {
+            ConnectThread connectThread = new ConnectThread(device);
+            connectThread.run();
+        } else {
+            connectedThread.run();
+        }
+    }
+
+    public void closeThread () {
+        connectedThread.cancel();
     }
 
     private class ConnectThread extends Thread {
@@ -69,7 +83,6 @@ public class BluetoothService {
                         // MAGIC CODE: http://stackoverflow.com/a/3397739
                         Method m = device.getClass().getMethod("createRfcommSocket", new Class[] {int.class});
                         tmp = (BluetoothSocket) m.invoke(device, 1);
-                        Toast.makeText(context, "ayy", Toast.LENGTH_SHORT).show();
                     } catch (Exception e) {
                         Toast.makeText(context, "Sucks " + e.toString(), Toast.LENGTH_SHORT).show();
                     }
@@ -113,8 +126,9 @@ public class BluetoothService {
 
             // The connection attempt succeeded. Perform work associated with
             // the connection in a separate thread.
-            Toast.makeText(context, "worked!!!", Toast.LENGTH_SHORT).show();
-            ConnectedThread connectedThread = new ConnectedThread(mmSocket);
+            //Toast.makeText(context, "worked!!!", Toast.LENGTH_SHORT).show();
+            connectedThread = new ConnectedThread(mmSocket);
+            //Toast.makeText(context, "assigned " + Boolean.toString(connectedThread == null), Toast.LENGTH_SHORT).show();
             connectedThread.run();
             //this.cancel();
         }
@@ -156,62 +170,40 @@ public class BluetoothService {
             mmInStream = tmpIn;
             mmOutStream = tmpOut;
 
-            Toast.makeText(context, "here 4", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(context, "here 4", Toast.LENGTH_SHORT).show();
         }
 
         public void run() {
             mmBuffer = new byte[1024];
             int numBytes; // bytes returned from read()
 
-            Toast.makeText(context, "here 5", Toast.LENGTH_SHORT).show();
-
             // Keep listening to the InputStream until an exception occurs.
             //while (true) {
-            try {
-                // Read from the InputStream.
-                numBytes = mmInStream.read(mmBuffer);
-                for (int i = 0; i < numBytes; i++) {
-                    Toast.makeText(context, Byte.toString(mmBuffer[i]), Toast.LENGTH_SHORT).show();
+                try {
+                    // Read from the InputStream.
+                    numBytes = mmInStream.read(mmBuffer);
+                    /*
+                    for (int i = 0; i < numBytes; i++) {
+                        Toast.makeText(context, Byte.toString(mmBuffer[i]), Toast.LENGTH_SHORT).show();
+                    }*/
+                    currWeight = BluetoothHelper.parseBytesNutriscale(mmBuffer, numBytes);
+                    Toast.makeText(context, "numBYTES: " + numBytes, Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(context, "FIRST: " + (mmBuffer[0] & 0xf) * 256, Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(context, "SECOND: " + Integer.toString(((int) mmBuffer[1]) & 0xff), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "WEIGHT: " + currWeight, Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(context, "WEIGHT: " + Integer.toString((mmBuffer[0] & 0xf) * 256 + ((int) mmBuffer[1]) & 0xff), Toast.LENGTH_SHORT).show();
+                } catch (IOException e) {
+                    Log.d(TAG, "Input stream was disconnected", e);
+                    Toast.makeText(context, "disconnected", Toast.LENGTH_SHORT).show();
+                    //break;
+                } catch (NullPointerException e) {
+                    Toast.makeText(context, "input stream null " + e.toString(), Toast.LENGTH_SHORT).show();
+                    //break;
+                } catch (Exception e) {
+                    Toast.makeText(context, "jesus " + e.toString(), Toast.LENGTH_SHORT).show();
+                    //break;
                 }
-                //Log.d(TAG, "BYTES: " + Integer.toString(numBytes));
-                // Send the obtained bytes to the UI activity.
-                    //Message readMsg = mHandler.obtainMessage(
-                            //MessageConstants.MESSAGE_READ, numBytes, -1,
-                            //mmBuffer);
-                //readMsg.sendToTarget();
-            } catch (IOException e) {
-                Log.d(TAG, "Input stream was disconnected", e);
-                Toast.makeText(context, "disconnected", Toast.LENGTH_SHORT).show();
-                //break;
             //}
-            } catch (NullPointerException e) {
-                Toast.makeText(context, "input stream null " + e.toString(), Toast.LENGTH_SHORT).show();
-            } catch (Exception e) {
-                Toast.makeText(context, "jesus " + e.toString(), Toast.LENGTH_SHORT).show();
-            }
-        }
-
-        // Call this from the main activity to send data to the remote device.
-        public void write(byte[] bytes) {
-            try {
-                mmOutStream.write(bytes);
-
-                // Share the sent message with the UI activity.
-                /*Message writtenMsg = mHandler.obtainMessage(
-                        MessageConstants.MESSAGE_WRITE, -1, -1, mmBuffer);*/
-                //writtenMsg.sendToTarget();
-            } catch (IOException e) {
-                Log.e(TAG, "Error occurred when sending data", e);
-
-                // Send a failure message back to the activity.
-                /*Message writeErrorMsg =
-                        mHandler.obtainMessage(MessageConstants.MESSAGE_TOAST);*/
-                Bundle bundle = new Bundle();
-                bundle.putString("toast",
-                        "Couldn't send data to the other device");
-                //writeErrorMsg.setData(bundle);
-                //mHandler.sendMessage(writeErrorMsg);
-            }
         }
 
         // Call this method from the main activity to shut down the connection.
