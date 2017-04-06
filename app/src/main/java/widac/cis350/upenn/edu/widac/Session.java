@@ -18,8 +18,10 @@ import widac.cis350.upenn.edu.widac.models.SampleStaging;
 /**
  * Created by J. Patrick Taggart on 2/17/2017.
  * =============================================
- * Store the ids of entries that have been modified durring current session
- * Also add
+ * Stores ids of artifacts worked with during app use
+ * Can pull data relevant to artifacts looked at in current period
+ * Stores instance of database connection
+ * Follows Singleton class pattern
  */
 
 public class Session {
@@ -29,7 +31,6 @@ public class Session {
     // Temp
     private static Callback<Sample> tempCB;
     private static String currId;
-    // private static List<Set<String>> pastSessions = new LinkedList<Set<String>>();
 
     private Session() {}
 
@@ -39,13 +40,6 @@ public class Session {
     public static void newSession() {
         entries.clear();
     }
-
-    // Return an unmodifiable of all session created during current use
-    //public static List<Set<String>> getPastSessions() {
-    //    return Collections.unmodifiableList(pastSessions);
-    //}
-
-    // Add method for switching to a past session?
 
     /*
         ENTRY METHODS
@@ -77,6 +71,7 @@ public class Session {
         // Somehow update DBC
     }
     // PULLING METHODS
+    // Below method now defunct
     public static Set<Sample> pullFromDB() {
         Set<Sample> samples = new HashSet<Sample>();
         // Check for elements that were deleted?
@@ -122,15 +117,18 @@ public class Session {
         DBC.getSample(id, addEntry);
     }
 
+    // Callback called on pull from database
     static Callback addEntry = new Callback<Sample>(){
-
         @Override
         public void onResponse(Call<Sample> call, Response<Sample> response) {
             int code = response.code();
             if (code == 200) {
+                // If able to find the entry then add it to recovered entries
                 if (currId != null) {
                     entries.add(currId);
                     currId = null;
+
+                    // Make call to callback passed from caller if one exists
                     if (tempCB != null) {
                         call.clone().enqueue(tempCB);
                         tempCB = null;

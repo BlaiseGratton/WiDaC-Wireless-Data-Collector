@@ -2,14 +2,11 @@ package widac.cis350.upenn.edu.widac;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.widget.TextView;
 
-import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -39,22 +36,25 @@ public class SessionReportActivity extends AppCompatActivity {
         setContentView(R.layout.session_report);
 
         // Get Session data and create table from it
-        // Session.initalizeTest();
         currentSession = Session.getCurrentSessionIDs();
+
+        // Put in a request for data from the database
         Session.asyncPullFromDB(collectEntries);
-        //createSessionReport();
     }
 
+    // Create the session report (only called by the callback)
     private void createSessionReport() {
         Log.d("SessionReport", "Create Report");
         generateStatistics();
     }
 
+    // Called when the database returns the data
     Callback collectEntries = new Callback<Sample>(){
         @Override
         public void onResponse(Call<Sample> call, Response<Sample> response) {
             int code = response.code();
             if (code == 200) {
+                // On success create the session report
                 Log.d("SessionReport", "Retrieving samples");
                 // Staging area now has all the samples, retrieve them
                 parseEntries(SampleStaging.retrieveSamples());
@@ -71,15 +71,6 @@ public class SessionReportActivity extends AppCompatActivity {
         }
     };
 
-    // TODO: DELETE THIS
-//    private Set<Sample> pullFromDB() {
-//        Set<Sample> samples = new HashSet<Sample>();
-//        for (String id: currentSession) {
-//            samples.add(DBC.retrieveSample(id));
-//        }
-//        return samples;
-//    }
-
     private void parseEntries(Set<Sample> entries) {
         // Sort entries by type
         types.put("Glass", new TypeData("Glass"));
@@ -88,6 +79,7 @@ public class SessionReportActivity extends AppCompatActivity {
         types.put("Stone", new TypeData("Stone"));
         types.put("Organic", new TypeData("Organic"));
 
+        // Place the samples recovered from the database in respective group
         for (Sample e: entries) {
             Log.d("SessionReport", "Creating entry of type: " + e.getMaterial());
             types.get(e.getMaterial()).addInstance(e);
@@ -100,14 +92,17 @@ public class SessionReportActivity extends AppCompatActivity {
                            + types.get("Metal").num + types.get("Stone").num
                            + types.get("Organic").num;
 
+        // Add number of items collected to table
         TextView tv = (TextView)findViewById(R.id.TotalNum);
         tv.setText("Total:" + itemsCollected);
 
+        // Calculate statistics
         setNumCollected();
         setAvgSize();
         setAvgWt();
     }
 
+    // Add the number of items of eact type collected to table
     private void setNumCollected() {
         TextView tv = (TextView)findViewById(R.id.NumA);
         tv.setText("" + types.get("Glass").num);
@@ -121,6 +116,7 @@ public class SessionReportActivity extends AppCompatActivity {
         tv.setText("" + types.get("Organic").num);
     }
 
+    // Populate table with data related to size
     private void setAvgSize() {
         TextView tv = (TextView)findViewById(R.id.AvgSizeA);
         tv.setText(String.format( "%.2f", types.get("Glass").avgSize ));
@@ -145,6 +141,7 @@ public class SessionReportActivity extends AppCompatActivity {
         tv.setText(String.format( "%.2f", types.get("Organic").stdDevSize() ));
     }
 
+    // Populate table with data relative to weight
     private void setAvgWt() {
         TextView tv = (TextView)findViewById(R.id.AvgWtA);
         tv.setText(String.format( "%.2f", types.get("Glass").avgWt ));
@@ -169,18 +166,7 @@ public class SessionReportActivity extends AppCompatActivity {
         tv.setText(String.format( "%.2f", types.get("Organic").stdDevWeight() ));
     }
 
-    private Set<DummyEntry> fakeDBcall() {
-        String[] types = {"Glass", "Ceramic", "Metal", "Stone", "Organic"};
-        Set<DummyEntry> entries = new HashSet<DummyEntry>();
-
-        for (int i = 0; i < 10; i++) {
-            String type = types[(int)(Math.random() * types.length)];
-            DummyEntry d = new DummyEntry(("" + i), type, "DUMMY", Math.random() * 2, Math.random() * 4);
-            entries.add(d);
-        }
-        return entries;
-    }
-
+    // Class for working with data recovered from the database
     private class TypeData {
         String type;
         int num = 0;
@@ -204,6 +190,7 @@ public class SessionReportActivity extends AppCompatActivity {
             this.type = type;
             this.instances = instances;
 
+            // Could move this to recalculate method
             double wt = 0, sz = 0;
             if (!instances.isEmpty()) {
                 for (Sample d: instances) {
