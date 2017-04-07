@@ -17,43 +17,53 @@
         android:id="@+id/search_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:weightSum="1">
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:baselineAligned="false">
 
             <Button
                 android:id="@+id/prev_item"
                 style="?android:textAppearanceSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
                 android:onClick="onPrevButtonClick"
-                android:text="Previous"
-                android:textStyle="bold" />
+                android:text="Prev"
+                android:textStyle="bold"
+                android:layout_weight="33"/>
+
+            <TextView
+                android:text="Item 123"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/item_name"
+                android:gravity="center_horizontal"
+                android:textSize="10pt"
+                android:layout_alignTop="@+id/prev_item"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_weight="66"/>
 
             <Button
                 android:id="@+id/next_item"
                 style="?android:textAppearanceSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
                 android:onClick="onNextButtonClick"
                 android:text="Next"
                 android:textStyle="bold"
-                android:layout_alignParentEnd="true" />
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_weight="33"/>
 
-        </RelativeLayout>
-
-        <TextView
-            android:text="Item 123"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/item_name"
-            android:gravity="center_horizontal"
-            android:textSize="20pt" />
+        </LinearLayout>
 
         <ImageView
             android:layout_width="match_parent"
@@ -70,17 +80,43 @@
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:textSize="12pt"
-            android:id="@+id/itemWeight" />
+            android:id="@+id/itemWeight"
+            android:layout_marginBottom="@dimen/snackbar_text_size"
+            />
 
-        <Button
-            android:id="@+id/update_bluetooth"
-            style="?android:textAppearanceSmall"
+        <TextView
+            android:text="@string/update_weight"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:onClick="onUpdateBluetoothButtonClick"
-            android:text="@string/update_bluetooth"
-            android:textStyle="bold" />
+            android:layout_height="match_parent"
+            android:textSize="18dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/update_bluetooth"
+                style="?android:textAppearanceSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:onClick="onUpdateBluetoothButtonClick"
+                android:text="@string/update_bluetooth"
+                android:textStyle="bold"
+                android:layout_weight="75"/>
+            <Button
+                android:id="@+id/update_manual"
+                style="?android:textAppearanceSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:onClick="onUpdateManualButtonClick"
+                android:text="@string/update_manual"
+                android:textStyle="bold"
+                android:layout_weight="5"/>
+        </LinearLayout>
+>>>>>>> master
 
     </LinearLayout>
 
