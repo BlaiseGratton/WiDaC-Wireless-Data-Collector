@@ -47,7 +47,7 @@ public class BluetoothService {
     }
 
     public void runService(BluetoothDevice device) {
-        Toast.makeText(context, Boolean.toString(connectedThread == null), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(context, Boolean.toString(connectedThread == null), Toast.LENGTH_SHORT).show();
         if (connectedThread == null) {
             ConnectThread connectThread = new ConnectThread(device);
             connectThread.run();
@@ -187,14 +187,16 @@ public class BluetoothService {
                         Toast.makeText(context, Byte.toString(mmBuffer[i]), Toast.LENGTH_SHORT).show();
                     }*/
                     currWeight = BluetoothHelper.parseBytesNutriscale(mmBuffer, numBytes);
-                    Toast.makeText(context, "numBYTES: " + numBytes, Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(context, "numBYTES: " + numBytes, Toast.LENGTH_SHORT).show();
                     //Toast.makeText(context, "FIRST: " + (mmBuffer[0] & 0xf) * 256, Toast.LENGTH_SHORT).show();
                     //Toast.makeText(context, "SECOND: " + Integer.toString(((int) mmBuffer[1]) & 0xff), Toast.LENGTH_SHORT).show();
                     Toast.makeText(context, "WEIGHT: " + currWeight, Toast.LENGTH_SHORT).show();
                     //Toast.makeText(context, "WEIGHT: " + Integer.toString((mmBuffer[0] & 0xf) * 256 + ((int) mmBuffer[1]) & 0xff), Toast.LENGTH_SHORT).show();
                 } catch (IOException e) {
                     Log.d(TAG, "Input stream was disconnected", e);
-                    Toast.makeText(context, "disconnected", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Disconnected from scale: please restart the scale", Toast.LENGTH_LONG).show();
+                    connectedThread.cancel();
+                    connectedThread = null;
                     //break;
                 } catch (NullPointerException e) {
                     Toast.makeText(context, "input stream null " + e.toString(), Toast.LENGTH_SHORT).show();
