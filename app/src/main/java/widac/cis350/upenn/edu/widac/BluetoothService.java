@@ -181,17 +181,23 @@ public class BluetoothService {
             //while (true) {
                 try {
                     // Read from the InputStream.
-                    numBytes = mmInStream.read(mmBuffer);
-                    /*
-                    for (int i = 0; i < numBytes; i++) {
-                        Toast.makeText(context, Byte.toString(mmBuffer[i]), Toast.LENGTH_SHORT).show();
-                    }*/
-                    currWeight = BluetoothHelper.parseBytesNutriscale(mmBuffer, numBytes);
-                    //Toast.makeText(context, "numBYTES: " + numBytes, Toast.LENGTH_SHORT).show();
-                    //Toast.makeText(context, "FIRST: " + (mmBuffer[0] & 0xf) * 256, Toast.LENGTH_SHORT).show();
-                    //Toast.makeText(context, "SECOND: " + Integer.toString(((int) mmBuffer[1]) & 0xff), Toast.LENGTH_SHORT).show();
-                    Toast.makeText(context, "WEIGHT: " + currWeight, Toast.LENGTH_SHORT).show();
-                    //Toast.makeText(context, "WEIGHT: " + Integer.toString((mmBuffer[0] & 0xf) * 256 + ((int) mmBuffer[1]) & 0xff), Toast.LENGTH_SHORT).show();
+                    // can speed up pull time by checking if data is available
+                    if (mmInStream.available() >= 2) {
+                        numBytes = mmInStream.read(mmBuffer);
+                        /*
+                        for (int i = 0; i < numBytes; i++) {
+                            Toast.makeText(context, Byte.toString(mmBuffer[i]), Toast.LENGTH_SHORT).show();
+                        }*/
+                        currWeight = BluetoothHelper.parseBytesNutriscale(mmBuffer, numBytes);
+                        //Toast.makeText(context, "numBYTES: " + numBytes, Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(context, "FIRST: " + (mmBuffer[0] & 0xf) * 256, Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(context, "SECOND: " + Integer.toString(((int) mmBuffer[1]) & 0xff), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "WEIGHT: " + currWeight, Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(context, "WEIGHT: " + Integer.toString((mmBuffer[0] & 0xf) * 256 + ((int) mmBuffer[1]) & 0xff), Toast.LENGTH_SHORT).show();
+                    } else {
+                        // Alert that reading was not taken.
+                        Toast.makeText(context, "No change detected. Please reweigh the item and try again.", Toast.LENGTH_LONG).show();
+                    }
                 } catch (IOException e) {
                     Log.d(TAG, "Input stream was disconnected", e);
                     Toast.makeText(context, "Disconnected from scale: please restart the scale", Toast.LENGTH_LONG).show();
