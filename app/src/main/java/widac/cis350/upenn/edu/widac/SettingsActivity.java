@@ -99,9 +99,10 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     // Opens phone settings to pair devices
-    public void onPairDeviceClick() {
-        Intent intent = new Intent(Settings.ACTION_BLUETOOTH_SETTINGS);
-        //startActivityForResult(intent, REQUEST_PAIR_DEVICE);
+    public void onPairDeviceClick(View v) {
+        Intent intentOpenBluetoothSettings = new Intent();
+        intentOpenBluetoothSettings.setAction(android.provider.Settings.ACTION_BLUETOOTH_SETTINGS);
+        startActivity(intentOpenBluetoothSettings);
     }
 
     public void onSettingsSearchButtonClick(View v) {
