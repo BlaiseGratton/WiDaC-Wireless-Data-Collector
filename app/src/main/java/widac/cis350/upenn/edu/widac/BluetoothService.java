@@ -49,8 +49,7 @@ public class BluetoothService {
     public void runService(BluetoothDevice device) {
         //Toast.makeText(context, Boolean.toString(connectedThread == null), Toast.LENGTH_SHORT).show();
         if (connectedThread == null) {
-            ConnectThread connectThread = new ConnectThread(device);
-            connectThread.run();
+            Toast.makeText(context, "Device not found: try to reconnect", Toast.LENGTH_SHORT).show();
         } else {
             connectedThread.run();
         }
@@ -58,6 +57,15 @@ public class BluetoothService {
 
     public void closeThread () {
         connectedThread.cancel();
+        connectedThread = null;
+    }
+
+    public void reconnect(BluetoothDevice device) {
+        if (connectedThread != null) {
+            closeThread();
+        }
+        ConnectThread connectThread = new ConnectThread(device);
+        connectThread.run();
     }
 
     private class ConnectThread extends Thread {
@@ -84,7 +92,7 @@ public class BluetoothService {
                         Method m = device.getClass().getMethod("createRfcommSocket", new Class[] {int.class});
                         tmp = (BluetoothSocket) m.invoke(device, 1);
                     } catch (Exception e) {
-                        Toast.makeText(context, "Sucks " + e.toString(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "Error: " + e.toString(), Toast.LENGTH_SHORT).show();
                     }
                 }
                 else Log.d(TAG, "Device is null.");
@@ -109,12 +117,12 @@ public class BluetoothService {
             try {
                 // Connect to the remote device through the socket. This call blocks
                 // until it succeeds or throws an exception.
-                Toast.makeText(context, "TRYING TO CONNECT", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(context, "TRYING TO CONNECT", Toast.LENGTH_SHORT).show();
                 mmSocket.connect();
             } catch (IOException connectException) {
                 // Unable to connect; close the socket and return.
                 Toast.makeText(context, "UNABLE TO CONNECT", Toast.LENGTH_SHORT).show();
-                Toast.makeText(context, connectException.toString(), Toast.LENGTH_LONG).show();
+                Toast.makeText(context, connectException.toString(), Toast.LENGTH_SHORT).show();
                 try {
                     mmSocket.close();
                 } catch (IOException closeException) {
@@ -129,7 +137,7 @@ public class BluetoothService {
             //Toast.makeText(context, "worked!!!", Toast.LENGTH_SHORT).show();
             connectedThread = new ConnectedThread(mmSocket);
             //Toast.makeText(context, "assigned " + Boolean.toString(connectedThread == null), Toast.LENGTH_SHORT).show();
-            connectedThread.run();
+            //connectedThread.run();
             //this.cancel();
         }
 
@@ -196,11 +204,11 @@ public class BluetoothService {
                         //Toast.makeText(context, "WEIGHT: " + Integer.toString((mmBuffer[0] & 0xf) * 256 + ((int) mmBuffer[1]) & 0xff), Toast.LENGTH_SHORT).show();
                     } else {
                         // Alert that reading was not taken.
-                        Toast.makeText(context, "No change detected. Please reweigh the item and try again.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, "No change detected. Please check if the scale is on and re-weigh the item.", Toast.LENGTH_SHORT).show();
                     }
                 } catch (IOException e) {
                     Log.d(TAG, "Input stream was disconnected", e);
-                    Toast.makeText(context, "Disconnected from scale: please restart the scale", Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, "Disconnected from scale: please restart the scale", Toast.LENGTH_SHORT).show();
                     connectedThread.cancel();
                     connectedThread = null;
                     //break;

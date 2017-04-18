@@ -43,7 +43,8 @@
             android:text="Sample Database"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="10pt" />
+            android:textSize="10pt"
+            android:id="@+id/connectedDB" />
 
         <TextView
             android:text="Paired Devices"

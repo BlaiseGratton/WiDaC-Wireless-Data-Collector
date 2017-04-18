@@ -12,14 +12,21 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import widac.cis350.upenn.edu.widac.data.remote.WidacService;
+
+import static android.R.id.list;
+
 public class SettingsActivity extends AppCompatActivity {
     int REQUEST_PAIR_DEVICE = 1;
-    Map<String, String> devices = new HashMap<>();
+    //Map<String, String> devices = new HashMap<>();
+    String[] devices;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,20 +40,26 @@ public class SettingsActivity extends AppCompatActivity {
         // Populate the currenlty paired devices list
         //Add currently paired devices to list
         getPairedDevices();
+
         ListView list = (ListView)findViewById(R.id.paired_devices_list);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(list.getContext(),
-                android.R.layout.simple_list_item_1, (String[]) devices.keySet().toArray());
+                android.R.layout.simple_list_item_1, devices);
 
+        TextView connectedDB = (TextView) findViewById(R.id.connectedDB);
+        connectedDB.setText(WidacService.ENDPOINT);
     }
 
     private void getPairedDevices() {
         Set<BluetoothDevice> pairedDevices = BluetoothAdapter.getDefaultAdapter().getBondedDevices();
         if (pairedDevices.size() > 0) {
             // There are paired devices. Get the name and address of each paired device.
+            devices = new String[pairedDevices.size()];
+            int index = 0;
             for (BluetoothDevice device : pairedDevices) {
                 String deviceName = device.getName();
-                String deviceHardwareAddress = device.getAddress(); // MAC address
-                devices.put(deviceName, deviceHardwareAddress);
+                devices[index] = deviceName;
+                index++;
+                Toast.makeText(this, deviceName, Toast.LENGTH_SHORT).show();
             }
         }
     }

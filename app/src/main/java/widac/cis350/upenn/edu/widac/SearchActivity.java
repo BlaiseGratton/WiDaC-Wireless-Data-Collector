@@ -3,8 +3,11 @@ package widac.cis350.upenn.edu.widac;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -66,15 +69,53 @@ public class SearchActivity extends AppCompatActivity {
                 if (deviceHardwareAddress.equals(scaleAddress)) {
                     this.device = device;
                     bluetoothService = new BluetoothService(this);
+                    bluetoothService.reconnect(device);
                 }
             }
         }
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
+        filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED);
+        filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
+        this.registerReceiver(mReceiver, filter);
     }
+
+    //The BroadcastReceiver that listens for bluetooth broadcasts
+    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+
+            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+                //... //Device found
+            }
+            else if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)) {
+                Toast.makeText(context, "Connected", Toast.LENGTH_SHORT).show(); //Device is now connected
+            }
+            else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
+                //... //Done searching
+            }
+            else if (BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED.equals(action)) {
+                Toast.makeText(context, "Disconnect requested", Toast.LENGTH_SHORT).show(); //Device is about to disconnect
+            }
+            else if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action)) {
+                bluetoothService.reconnect(device);
+                Toast.makeText(context, "Disconnected from scale: please restart the scale", Toast.LENGTH_SHORT).show(); //Device has disconnected
+            }
+        }
+    };
     
     public void onUpdateBluetoothButtonClick(View v) {
         ((TextView)findViewById(R.id.itemWeight)).setText("Weight: 234g");
         runBluetooth();
-        Toast.makeText(this, "Weight updated", Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, "Weight updated", Toast.LENGTH_SHORT).show();
+    }
+
+    public void onReconnectClick(View v) {
+        Toast.makeText(this, "Reconnecting", Toast.LENGTH_SHORT).show();
+        bluetoothService.reconnect(device);
     }
     
     public void onUpdateManualButtonClick(View v) {
