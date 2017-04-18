@@ -33,8 +33,9 @@ public class Session {
     private static Callback<Sample> tempCB;
     private static String currId;
 
-    public static BluetoothService bluetoothService;
-    public static BluetoothDevice device = null;
+    //public static BluetoothService bluetoothService;
+    //public static BluetoothDevice device = null;
+    public static String deviceName = null;
 
     public static String searchQuery;
 

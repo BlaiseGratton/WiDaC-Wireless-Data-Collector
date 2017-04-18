@@ -61,11 +61,15 @@ public class BluetoothService {
     }
 
     public void reconnect(BluetoothDevice device) {
-        if (connectedThread != null) {
-            closeThread();
+        try {
+            if (connectedThread != null) {
+                closeThread();
+            }
+            ConnectThread connectThread = new ConnectThread(device);
+            connectThread.run();
+        } catch (Exception e) {
+            Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show();
         }
-        ConnectThread connectThread = new ConnectThread(device);
-        connectThread.run();
     }
 
     private class ConnectThread extends Thread {

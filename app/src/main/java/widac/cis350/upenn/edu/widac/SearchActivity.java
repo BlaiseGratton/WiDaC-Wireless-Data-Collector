@@ -23,15 +23,14 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import widac.cis350.upenn.edu.widac.models.Sample;
 
-import static widac.cis350.upenn.edu.widac.Session.bluetoothService;
-import static widac.cis350.upenn.edu.widac.Session.device;
-
 public class SearchActivity extends AppCompatActivity {
     
     private Sample sample;
     DBConnection db;
     private int itemNumber;
 
+    public BluetoothService bluetoothService;
+    public BluetoothDevice device = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,26 +59,24 @@ public class SearchActivity extends AppCompatActivity {
         bluetoothService = null;
         device = null;
 
-        /*
         String scaleAddress = "0F:03:14:0A:03:9B";
         String scaleName = "nutriscale_1910";
 
         Set<BluetoothDevice> pairedDevices = BluetoothAdapter.getDefaultAdapter().getBondedDevices();
         if (pairedDevices.size() > 0) {
             // There are paired devices. Get the name and address of each paired device.
-            for (BluetoothDevice device : pairedDevices) {
-                String deviceName = device.getName();
-                String deviceHardwareAddress = device.getAddress(); // MAC address
-                if (deviceHardwareAddress.equals(scaleAddress)) {
-                    Session.device = device;
+            for (BluetoothDevice pairedDv : pairedDevices) {
+                String deviceName = pairedDv.getName();
+                // String deviceHardwareAddress = device.getAddress(); // MAC address
+                if (deviceName.equals(Session.deviceName)) {
+                    device = pairedDv;
                     bluetoothService = new BluetoothService(this);
                     bluetoothService.reconnect(device);
                 }
             }
-        }*/
+        }
 
-        Session.bluetoothService = new BluetoothService(this);
-        Session.bluetoothService.reconnect(Session.device);
+        Toast.makeText(this, Session.deviceName, Toast.LENGTH_SHORT).show();
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);

@@ -16,8 +16,6 @@ import android.os.Handler;
 
 import java.util.Set;
 
-import static widac.cis350.upenn.edu.widac.Session.device;
-
 public class MainActivity extends AppCompatActivity {
 
     public final static String COMPOSITE_KEY = "compositeKey";
@@ -33,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         EditText editText = (EditText) findViewById(R.id.searchBox);
         Session.searchQuery = editText.getText().toString();
 
-        if (Session.device == null) {
+        if (Session.deviceName == null) {
             Intent i = new Intent(this, SettingsActivity.class);
             startActivityForResult(i, 1);
         } else {

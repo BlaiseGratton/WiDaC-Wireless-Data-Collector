@@ -26,7 +26,6 @@ import widac.cis350.upenn.edu.widac.data.remote.WidacService;
 import static android.R.id.list;
 import static java.security.AccessController.getContext;
 import static widac.cis350.upenn.edu.widac.R.id.connectedDB;
-import static widac.cis350.upenn.edu.widac.Session.bluetoothService;
 
 public class SettingsActivity extends AppCompatActivity {
     int REQUEST_PAIR_DEVICE = 1;
@@ -57,19 +56,19 @@ public class SettingsActivity extends AppCompatActivity {
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getApplicationContext(), Integer.toString(position), Toast.LENGTH_SHORT).show();
                 Set<BluetoothDevice> pairedDevices = BluetoothAdapter.getDefaultAdapter().getBondedDevices();
                 if (pairedDevices.size() > 0) {
                     // There are paired devices. Get the name and address of each paired device.
                     for (BluetoothDevice device : pairedDevices) {
                         String deviceName = device.getName();
                         if (deviceName.equals(devices[position])) {
-                            Session.device = device;
+                            //Session.device = device;
+                            Session.deviceName = deviceName;
                         }
 
                         TextView connectedDevice = (TextView) findViewById(R.id.connected_device);
-                        if (Session.device != null) {
-                            connectedDevice.setText("Device: " + Session.device.getName());
+                        if (Session.deviceName != null) {
+                            connectedDevice.setText("Device: " + Session.deviceName);
                         }
                     }
                 }
@@ -80,8 +79,8 @@ public class SettingsActivity extends AppCompatActivity {
         connectedDB.setText("Database: " + WidacService.ENDPOINT);
 
         TextView connectedDevice = (TextView) findViewById(R.id.connected_device);
-        if (Session.device != null) {
-            connectedDevice.setText(Session.device.getName());
+        if (Session.deviceName != null) {
+            connectedDevice.setText(Session.deviceName);
         }
     }
 
@@ -95,7 +94,6 @@ public class SettingsActivity extends AppCompatActivity {
                 String deviceName = device.getName();
                 devices[index] = deviceName;
                 index++;
-                Toast.makeText(this, deviceName, Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -103,11 +101,11 @@ public class SettingsActivity extends AppCompatActivity {
     // Opens phone settings to pair devices
     public void onPairDeviceClick() {
         Intent intent = new Intent(Settings.ACTION_BLUETOOTH_SETTINGS);
-        startActivityForResult(intent, REQUEST_PAIR_DEVICE);
+        //startActivityForResult(intent, REQUEST_PAIR_DEVICE);
     }
 
     public void onSettingsSearchButtonClick(View v) {
-        if (Session.device == null) {
+        if (Session.deviceName == null) {
             Toast.makeText(this, "Please connect a device", Toast.LENGTH_SHORT).show();
         } else {
             Intent i = new Intent(this, SearchActivity.class);
