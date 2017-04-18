@@ -1,5 +1,6 @@
 package widac.cis350.upenn.edu.widac;
 
+import android.bluetooth.BluetoothDevice;
 import android.util.Log;
 import android.widget.TextView;
 
@@ -31,6 +32,11 @@ public class Session {
     // Temp
     private static Callback<Sample> tempCB;
     private static String currId;
+
+    public static BluetoothService bluetoothService;
+    public static BluetoothDevice device = null;
+
+    public static String searchQuery;
 
     private Session() {}
 

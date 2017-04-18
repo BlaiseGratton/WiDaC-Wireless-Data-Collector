@@ -16,6 +16,8 @@ import android.os.Handler;
 
 import java.util.Set;
 
+import static widac.cis350.upenn.edu.widac.Session.device;
+
 public class MainActivity extends AppCompatActivity {
 
     public final static String COMPOSITE_KEY = "compositeKey";
@@ -28,14 +30,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onSearchButtonClick(View v) {
-        Intent i = new Intent(this, SearchActivity.class);
+        EditText editText = (EditText) findViewById(R.id.searchBox);
+        Session.searchQuery = editText.getText().toString();
+
+        if (Session.device == null) {
+            Intent i = new Intent(this, SettingsActivity.class);
+            startActivityForResult(i, 1);
+        } else {
+            Intent i = new Intent(this, SearchActivity.class);
 //        String queryKey = ((EditText)findViewById(R.id.searchBox)).getText().toString();
 //        i.putExtra(COMPOSITE_KEY, queryKey);
-        EditText editText = (EditText) findViewById(R.id.searchBox);
-        String queryKey = editText.getText().toString();
-        //i.putExtra(COMPOSITE_KEY, queryKey);
-        i.putExtra("id", queryKey);
-        startActivityForResult(i, 1);
+            startActivityForResult(i, 1);
+        }
     }
 
     public void onSettingsButtonClick(View v) {

@@ -23,13 +23,15 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import widac.cis350.upenn.edu.widac.models.Sample;
 
+import static widac.cis350.upenn.edu.widac.Session.bluetoothService;
+import static widac.cis350.upenn.edu.widac.Session.device;
+
 public class SearchActivity extends AppCompatActivity {
     
     private Sample sample;
     DBConnection db;
     private int itemNumber;
-    BluetoothService bluetoothService;
-    BluetoothDevice device;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +40,7 @@ public class SearchActivity extends AppCompatActivity {
         db = new DBConnection();
         Intent i = this.getIntent();
 
-
+        /*
         sample = db.retrieveSample(i.getStringExtra("compositeKey"));
         TextView itemName = (TextView) findViewById(R.id.item_name);
         sample  = db.retrieveSample(i.getStringExtra("compositeKey"));
@@ -46,8 +48,9 @@ public class SearchActivity extends AppCompatActivity {
         TextView itemWeight = (TextView) findViewById(R.id.itemWeight);
         String displayWeight = (sample.getWeight() == 0) ? "No Data" : "" + sample.getWeight();
         itemWeight.setText(displayWeight);
+        */
 
-        db.getSample(i.getStringExtra("id"), sampleCallback);
+        db.getSample(Session.searchQuery, sampleCallback);
 
         itemNumber = 123;
 
@@ -57,6 +60,7 @@ public class SearchActivity extends AppCompatActivity {
         bluetoothService = null;
         device = null;
 
+        /*
         String scaleAddress = "0F:03:14:0A:03:9B";
         String scaleName = "nutriscale_1910";
 
@@ -67,12 +71,15 @@ public class SearchActivity extends AppCompatActivity {
                 String deviceName = device.getName();
                 String deviceHardwareAddress = device.getAddress(); // MAC address
                 if (deviceHardwareAddress.equals(scaleAddress)) {
-                    this.device = device;
+                    Session.device = device;
                     bluetoothService = new BluetoothService(this);
                     bluetoothService.reconnect(device);
                 }
             }
-        }
+        }*/
+
+        Session.bluetoothService = new BluetoothService(this);
+        Session.bluetoothService.reconnect(Session.device);
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);

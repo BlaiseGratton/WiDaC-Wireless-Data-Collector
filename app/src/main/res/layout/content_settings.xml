@@ -34,13 +34,14 @@
             android:textSize="12pt" />
 
         <TextView
-            android:text="Sample Device"
+            android:text="No device connected"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="10pt" />
+            android:textSize="10pt"
+            android:id="@+id/connected_device" />
 
         <TextView
-            android:text="Sample Database"
+            android:text="No database connected"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="10pt"
@@ -64,13 +65,13 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/update_bluetooth"
+                android:id="@+id/settings_search"
                 style="?android:textAppearanceSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:onClick="onConnectDeviceButtonClick"
-                android:text="@string/connect_device"
+                android:onClick="onSettingsSearchButtonClick"
+                android:text="Search"
                 android:textStyle="bold"
                 android:layout_weight="75"/>
             <Button
