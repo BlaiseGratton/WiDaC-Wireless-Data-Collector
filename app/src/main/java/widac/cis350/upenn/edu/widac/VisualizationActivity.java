@@ -19,7 +19,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import widac.cis350.upenn.edu.widac.models.Sample;
+import widac.cis350.upenn.edu.widac.models.SampleStaging;
 
 public class VisualizationActivity extends AppCompatActivity {
     PieChart pieChart;
@@ -35,19 +39,41 @@ public class VisualizationActivity extends AppCompatActivity {
         /**
          * TESTING METHOD
          **/
-        Session.initalizeTest();
+        //Session.initalizeTest();
         /**
          * Keep
          **/
         pieChart = (PieChart) findViewById(R.id.typesCollectedPieChart);
-        createChart();
+        Session.asyncPullFromDB(collectEntries);
+        //createChart();
     }
+
+    // Can probably abstract this in some way in the future
+    Callback collectEntries = new Callback<Sample>(){
+        @Override
+        public void onResponse(Call<Sample> call, Response<Sample> response) {
+            int code = response.code();
+            if (code == 200) {
+                // Staging area now has all the samples, retrieve them
+                parseArtifacts(SampleStaging.retrieveSamples());
+                createChart();
+            } else {
+                // Could not create session report
+                Log.d("VisualizationActivity", "Did not work: " + String.valueOf(code));
+            }
+        }
+
+        @Override
+        public void onFailure(Call<Sample> call, Throwable t) {
+            Log.d("VisualizationActivity", "Create report failure");
+        }
+    };
 
     // Build a chart showing the various pieces collected during the current session
     private void createChart() {
         Log.d("VisualizationActivity", "createChart");
         // Create generic interface in the future
-        parseArtifacts(Session.pullFromDB());
+        //parseArtifacts(Session.pullFromDB());
 
         List<PieEntry> entries = new ArrayList<>();
 

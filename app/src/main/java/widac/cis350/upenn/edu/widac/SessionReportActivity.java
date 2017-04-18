@@ -13,7 +13,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import widac.cis350.upenn.edu.widac.models.Sample;
+import widac.cis350.upenn.edu.widac.models.SampleStaging;
 
 /**
  * Created by J. Patrick Taggart on 2/17/2017.
@@ -35,32 +39,54 @@ public class SessionReportActivity extends AppCompatActivity {
         setContentView(R.layout.session_report);
 
         // Get Session data and create table from it
-        Session.initalizeTest();
+        // Session.initalizeTest();
         currentSession = Session.getCurrentSessionIDs();
-        createSessionReport();
+        Session.asyncPullFromDB(collectEntries);
+        //createSessionReport();
     }
 
     private void createSessionReport() {
-        // Currently pulling data from fake db
-        parseEntries(pullFromDB());
+        Log.d("SessionReport", "Create Report");
         generateStatistics();
     }
 
-    private Set<Sample> pullFromDB() {
-        Set<Sample> samples = new HashSet<Sample>();
-        for (String id: currentSession) {
-            samples.add(DBC.retrieveSample(id));
+    Callback collectEntries = new Callback<Sample>(){
+        @Override
+        public void onResponse(Call<Sample> call, Response<Sample> response) {
+            int code = response.code();
+            if (code == 200) {
+                Log.d("SessionReport", "Retrieving samples");
+                // Staging area now has all the samples, retrieve them
+                parseEntries(SampleStaging.retrieveSamples());
+                createSessionReport();
+            } else {
+                // Could not create session report
+                Log.d("SessionReport", "Did not work: " + String.valueOf(code));
+            }
         }
-        return samples;
-    }
+
+        @Override
+        public void onFailure(Call<Sample> call, Throwable t) {
+            Log.d("SessionReport", "Create report failure");
+        }
+    };
+
+    // TODO: DELETE THIS
+//    private Set<Sample> pullFromDB() {
+//        Set<Sample> samples = new HashSet<Sample>();
+//        for (String id: currentSession) {
+//            samples.add(DBC.retrieveSample(id));
+//        }
+//        return samples;
+//    }
 
     private void parseEntries(Set<Sample> entries) {
         // Sort entries by type
-        types.put("A", new TypeData("A"));
-        types.put("B", new TypeData("B"));
-        types.put("C", new TypeData("C"));
-        types.put("D", new TypeData("D"));
-        types.put("E", new TypeData("E"));
+        types.put("Glass", new TypeData("Glass"));
+        types.put("Ceramic", new TypeData("Ceramic"));
+        types.put("Metal", new TypeData("Metal"));
+        types.put("Stone", new TypeData("Stone"));
+        types.put("Organic", new TypeData("Organic"));
 
         for (Sample e: entries) {
             Log.d("SessionReport", "Creating entry of type: " + e.getMaterial());
@@ -70,7 +96,9 @@ public class SessionReportActivity extends AppCompatActivity {
 
     // Provide overview of data collected in recent session
     private void generateStatistics() {
-        int itemsCollected = 10;
+        int itemsCollected = types.get("Glass").num + types.get("Ceramic").num
+                           + types.get("Metal").num + types.get("Stone").num
+                           + types.get("Organic").num;
 
         TextView tv = (TextView)findViewById(R.id.TotalNum);
         tv.setText("Total:" + itemsCollected);
@@ -82,67 +110,67 @@ public class SessionReportActivity extends AppCompatActivity {
 
     private void setNumCollected() {
         TextView tv = (TextView)findViewById(R.id.NumA);
-        tv.setText("" + types.get("A").num);
+        tv.setText("" + types.get("Glass").num);
         tv = (TextView)findViewById(R.id.NumB);
-        tv.setText("" + types.get("B").num);
+        tv.setText("" + types.get("Ceramic").num);
         tv = (TextView)findViewById(R.id.NumC);
-        tv.setText("" + types.get("C").num);
+        tv.setText("" + types.get("Metal").num);
         tv = (TextView)findViewById(R.id.NumD);
-        tv.setText("" + types.get("D").num);
+        tv.setText("" + types.get("Stone").num);
         tv = (TextView)findViewById(R.id.NumE);
-        tv.setText("" + types.get("E").num);
+        tv.setText("" + types.get("Organic").num);
     }
 
     private void setAvgSize() {
         TextView tv = (TextView)findViewById(R.id.AvgSizeA);
-        tv.setText(String.format( "%.2f", types.get("A").avgSize ));
+        tv.setText(String.format( "%.2f", types.get("Glass").avgSize ));
         tv = (TextView)findViewById(R.id.AvgSizeB);
-        tv.setText(String.format( "%.2f", types.get("B").avgSize ));
+        tv.setText(String.format( "%.2f", types.get("Ceramic").avgSize ));
         tv = (TextView)findViewById(R.id.AvgSizeC);
-        tv.setText(String.format( "%.2f", types.get("C").avgSize ));
+        tv.setText(String.format( "%.2f", types.get("Metal").avgSize ));
         tv = (TextView)findViewById(R.id.AvgSizeD);
-        tv.setText(String.format( "%.2f", types.get("D").avgSize ));
+        tv.setText(String.format( "%.2f", types.get("Stone").avgSize ));
         tv = (TextView)findViewById(R.id.AvgSizeE);
-        tv.setText(String.format( "%.2f", types.get("E").avgSize ));
+        tv.setText(String.format( "%.2f", types.get("Organic").avgSize ));
 
         tv = (TextView)findViewById(R.id.DevAvgSizeA);
-        tv.setText(String.format( "%.2f", types.get("A").stdDevSize() ));
+        tv.setText(String.format( "%.2f", types.get("Glass").stdDevSize() ));
         tv = (TextView)findViewById(R.id.DevAvgSizeB);
-        tv.setText(String.format( "%.2f", types.get("B").stdDevSize()));
+        tv.setText(String.format( "%.2f", types.get("Ceramic").stdDevSize()));
         tv = (TextView)findViewById(R.id.DevAvgSizeC);
-        tv.setText(String.format( "%.2f", types.get("C").stdDevSize() ));
+        tv.setText(String.format( "%.2f", types.get("Metal").stdDevSize() ));
         tv = (TextView)findViewById(R.id.DevAvgSizeD);
-        tv.setText(String.format( "%.2f", types.get("D").stdDevSize() ));
+        tv.setText(String.format( "%.2f", types.get("Stone").stdDevSize() ));
         tv = (TextView)findViewById(R.id.DevAvgSizeE);
-        tv.setText(String.format( "%.2f", types.get("E").stdDevSize() ));
+        tv.setText(String.format( "%.2f", types.get("Organic").stdDevSize() ));
     }
 
     private void setAvgWt() {
         TextView tv = (TextView)findViewById(R.id.AvgWtA);
-        tv.setText(String.format( "%.2f", types.get("A").avgWt ));
+        tv.setText(String.format( "%.2f", types.get("Glass").avgWt ));
         tv = (TextView)findViewById(R.id.AvgWtB);
-        tv.setText(String.format( "%.2f", types.get("B").avgWt ));
+        tv.setText(String.format( "%.2f", types.get("Ceramic").avgWt ));
         tv = (TextView)findViewById(R.id.AvgWtC);
-        tv.setText(String.format( "%.2f", types.get("C").avgWt ));
+        tv.setText(String.format( "%.2f", types.get("Metal").avgWt ));
         tv = (TextView)findViewById(R.id.AvgWtD);
-        tv.setText(String.format( "%.2f", types.get("D").avgWt ));
+        tv.setText(String.format( "%.2f", types.get("Stone").avgWt ));
         tv = (TextView)findViewById(R.id.AvgWtE);
-        tv.setText(String.format( "%.2f", types.get("E").avgWt ));
+        tv.setText(String.format( "%.2f", types.get("Organic").avgWt ));
 
         tv = (TextView)findViewById(R.id.DevAvgWtA);
-        tv.setText(String.format( "%.2f", types.get("A").stdDevWeight() ));
+        tv.setText(String.format( "%.2f", types.get("Glass").stdDevWeight() ));
         tv = (TextView)findViewById(R.id.DevAvgWtB);
-        tv.setText(String.format( "%.2f", types.get("B").stdDevWeight() ));
+        tv.setText(String.format( "%.2f", types.get("Ceramic").stdDevWeight() ));
         tv = (TextView)findViewById(R.id.DevAvgWtC);
-        tv.setText(String.format( "%.2f", types.get("C").stdDevWeight() ));
+        tv.setText(String.format( "%.2f", types.get("Metal").stdDevWeight() ));
         tv = (TextView)findViewById(R.id.DevAvgWtD);
-        tv.setText(String.format( "%.2f", types.get("D").stdDevWeight() ));
+        tv.setText(String.format( "%.2f", types.get("Stone").stdDevWeight() ));
         tv = (TextView)findViewById(R.id.DevAvgWtE);
-        tv.setText(String.format( "%.2f", types.get("E").stdDevWeight() ));
+        tv.setText(String.format( "%.2f", types.get("Organic").stdDevWeight() ));
     }
 
     private Set<DummyEntry> fakeDBcall() {
-        String[] types = {"A", "B", "C", "D", "E"};
+        String[] types = {"Glass", "Ceramic", "Metal", "Stone", "Organic"};
         Set<DummyEntry> entries = new HashSet<DummyEntry>();
 
         for (int i = 0; i < 10; i++) {
