@@ -39,17 +39,8 @@ public class SearchActivity extends AppCompatActivity {
         db = new DBConnection();
         Intent i = this.getIntent();
 
-        /*
-        sample = db.retrieveSample(i.getStringExtra("compositeKey"));
-        TextView itemName = (TextView) findViewById(R.id.item_name);
-        sample  = db.retrieveSample(i.getStringExtra("compositeKey"));
-        itemName.setText(sample.getCompositeKey());
-        TextView itemWeight = (TextView) findViewById(R.id.itemWeight);
-        String displayWeight = (sample.getWeight() == 0) ? "No Data" : "" + sample.getWeight();
-        itemWeight.setText(displayWeight);
-        */
-
-        db.getSample(Session.searchQuery, sampleCallback);
+        //db.getSample(Session.searchQuery, sampleCallback);
+        Session.asyncPullNewEntry(Session.searchQuery, sampleCallback);
 
         itemNumber = 123;
 
