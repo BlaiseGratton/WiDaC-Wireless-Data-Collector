@@ -1,9 +1,13 @@
 package widac.cis350.upenn.edu.widac;
 
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -33,6 +37,9 @@ public class SessionReportActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+
         setContentView(R.layout.session_report);
 
         // Get Session data and create table from it
@@ -72,6 +79,7 @@ public class SessionReportActivity extends AppCompatActivity {
     };
 
     private void parseEntries(Set<Sample> entries) {
+        Log.d("SessionReport", "# Samples: " + entries.size());
         // Sort entries by type
         types.put("Glass", new TypeData("Glass"));
         types.put("Ceramic", new TypeData("Ceramic"));
@@ -80,10 +88,20 @@ public class SessionReportActivity extends AppCompatActivity {
         types.put("Organic", new TypeData("Organic"));
 
         // Place the samples recovered from the database in respective group
+        boolean badData = false;
         for (Sample e: entries) {
-            Log.d("SessionReport", "Creating entry of type: " + e.getMaterial());
-            types.get(e.getMaterial()).addInstance(e);
+            if (e.getMaterial() != null) {
+                Log.d("SessionReport", "Creating entry of type: " + e.getMaterial());
+                types.get(e.getMaterial()).addInstance(e);
+            } else {
+                badData = true;
+            }
         }
+
+        if (badData) {
+            Toast.makeText(this, "Some samples returned material types not recognized.", Toast.LENGTH_SHORT).show();
+        }
+
     }
 
     // Provide overview of data collected in recent session

@@ -39,19 +39,17 @@ public class SearchActivity extends AppCompatActivity {
         db = new DBConnection();
         Intent i = this.getIntent();
 
+        Log.d("Search", "Searching on ID: " + Session.searchQuery);
         //db.getSample(Session.searchQuery, sampleCallback);
         Session.asyncPullNewEntry(Session.searchQuery, sampleCallback);
 
-        itemNumber = 123;
+        //itemNumber = 123;
 
         if (bluetoothService != null) {
             bluetoothService.closeThread();
         }
         bluetoothService = null;
         device = null;
-
-        String scaleAddress = "0F:03:14:0A:03:9B";
-        String scaleName = "nutriscale_1910";
 
         Set<BluetoothDevice> pairedDevices = BluetoothAdapter.getDefaultAdapter().getBondedDevices();
         if (pairedDevices.size() > 0) {
@@ -172,21 +170,22 @@ public class SearchActivity extends AppCompatActivity {
         public void onResponse(Call<Sample> call, Response<Sample> response) {
             int code = response.code();
             if (code == 200) {
+                Log.d("Search:DBConnection", "Body: " + response.body());
                 SearchActivity.this.sample = response.body();
                 TextView itemName = (TextView) findViewById(R.id.item_name);
                 itemName.setText(sample.getCompositeKey());
                 TextView itemWeight = (TextView) findViewById(R.id.itemWeight);
                 String displayWeight = (sample.getWeight() == 0) ? "No Data" : "" + sample.getWeight();
                 itemWeight.setText("Weight: " + displayWeight + "g");
-                Log.d("DBConnection", "Got the sample: " + sample.toString() + " Material: " + sample.getMaterial());
+                Log.d("Search:DBConnection", "Got the sample: " + sample.toString() + " Material: " + sample.getMaterial());
             } else {
-                Log.d("DBConnection", "Did not work: " + String.valueOf(code));
+                Log.d("Search:DBConnection", "Did not work: " + String.valueOf(code));
             }
         }
 
         @Override
         public void onFailure(Call<Sample> call, Throwable t) {
-            Log.d("DBConnection", "Get sample failure");
+            Log.d("Search:DBConnection", "Get sample failure");
         }
     };
 

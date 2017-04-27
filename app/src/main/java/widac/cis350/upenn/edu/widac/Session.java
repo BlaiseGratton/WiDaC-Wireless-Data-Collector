@@ -144,7 +144,7 @@ public class Session {
             } else {
                 currId = null;
                 tempCB = null;
-                Log.d("DBConnection", "Did not work: " + String.valueOf(code));
+                Log.d("Session:DBConnection", "Did not work: " + String.valueOf(code));
             }
         }
 
@@ -152,7 +152,7 @@ public class Session {
         public void onFailure(Call<Sample> call, Throwable t) {
             currId = null;
             tempCB = null;
-            Log.d("DBConnection", "Get sample failure");
+            Log.d("Session:DBConnection", "Get sample failure");
         }
     };
     // *********************************************************************************************

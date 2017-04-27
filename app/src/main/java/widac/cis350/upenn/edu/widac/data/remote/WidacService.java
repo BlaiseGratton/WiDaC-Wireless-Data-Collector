@@ -14,6 +14,6 @@ public interface WidacService {
 
     final String ENDPOINT = "https://widac-db-service.herokuapp.com";
 
-    @GET("/widac/api/v1.0/sample/{id}")
+    @GET("/widac/api/v1.0/samples/{id}")
     Call<Sample> getSample(@Path("id") String id);
 }
