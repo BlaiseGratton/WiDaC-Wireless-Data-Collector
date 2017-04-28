@@ -80,7 +80,7 @@ public class SessionReportActivity extends AppCompatActivity {
 
     private void parseEntries(Set<Sample> entries) {
         Log.d("SessionReport", "# Samples: " + entries.size());
-        // Sort entries by type
+        // Sort entries by type (all hardcoded)
         types.put("Glass", new TypeData("Glass"));
         types.put("Ceramic", new TypeData("Ceramic"));
         types.put("Metal", new TypeData("Metal"));
@@ -196,10 +196,10 @@ public class SessionReportActivity extends AppCompatActivity {
         boolean changed = false;
         Set<Sample> instances;
 
+        // Constructors
         TypeData() {
             instances = new HashSet<Sample>();
         }
-
         TypeData(String type) {
             this.type = type;
             instances = new HashSet<Sample>();
@@ -223,6 +223,7 @@ public class SessionReportActivity extends AppCompatActivity {
             changed = true;
         }
 
+        // Add a new value to the grouping
         void addInstance(Sample d) {
             Log.d("SessionReport", "Before Instance: Type=" + type + ", wt=" + avgWt +
                     ", sz=" + avgSize + ", num=" + num);
@@ -235,6 +236,7 @@ public class SessionReportActivity extends AppCompatActivity {
                     ", sz=" + avgSize + ", num=" + num);
         }
 
+        // Return the std. dev, update if it has changed since last calculation
         double stdDevWeight() {
             if (changed) {
                 recalculate();
@@ -242,7 +244,6 @@ public class SessionReportActivity extends AppCompatActivity {
 
             return devWt;
         }
-
         double stdDevSize() {
             if (changed) {
                 recalculate();
@@ -251,6 +252,7 @@ public class SessionReportActivity extends AppCompatActivity {
             return devSize;
         }
 
+        // Recalculate all values if a new instance has been added since last run
         private void recalculate() {
             devWt = 0;
             devSize = 0;

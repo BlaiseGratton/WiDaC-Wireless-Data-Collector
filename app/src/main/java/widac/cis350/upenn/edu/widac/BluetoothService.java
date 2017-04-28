@@ -42,14 +42,17 @@ public class BluetoothService {
     }
 
     public void runService(BluetoothDevice device) {
-        //Toast.makeText(context, Boolean.toString(connectedThread == null), Toast.LENGTH_SHORT).show();
+        // Check if have an existing connection, otherwise alert user
         if (connectedThread == null) {
             Toast.makeText(context, "Device not found: try to reconnect", Toast.LENGTH_SHORT).show();
         } else {
+            // Call to pull information from bluetooth
             connectedThread.run();
         }
     }
 
+    // Needs to be called whenever you want to restart a connection
+    // Can't reconnect to device if device thinks it is still connected (will get busy error)
     public void closeThread () {
         connectedThread.cancel();
         connectedThread = null;
@@ -57,9 +60,12 @@ public class BluetoothService {
 
     public void reconnect(BluetoothDevice device) {
         try {
+            // Close any existing connection to reopen it
             if (connectedThread != null) {
                 closeThread();
             }
+
+            // Create new connection with device
             ConnectThread connectThread = new ConnectThread(device);
             connectThread.run();
         } catch (Exception e) {
@@ -80,13 +86,14 @@ public class BluetoothService {
             UUID DEFAULT_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
             try {
-                // Use the UUID of the device that discovered // TODO Maybe need extra device object
+                // Use the UUID of the device that discovered
                 if (mmDevice != null)
                 {
                     Log.i(TAG, "Device Name: " + mmDevice.getName());
                     Log.i(TAG, "Device UUID: " + mmDevice.getUuids()[0].getUuid());
                     //tmp = device.createInsecureRfcommSocketToServiceRecord(mmDevice.getUuids()[0].getUuid());
                     try {
+                        // Opens a socket with the bluetooth device
                         // MAGIC CODE: http://stackoverflow.com/a/3397739
                         Method m = device.getClass().getMethod("createRfcommSocket", new Class[] {int.class});
                         tmp = (BluetoothSocket) m.invoke(device, 1);
@@ -99,6 +106,7 @@ public class BluetoothService {
             {
                 Log.d(TAG, " UUID from device is null, Using Default UUID, Device name: " + device.getName());
                 try {
+                    // Attempt to create connection using default
                     tmp = device.createInsecureRfcommSocketToServiceRecord(DEFAULT_UUID);
                 } catch (IOException e1) {
                     e1.printStackTrace();
@@ -116,13 +124,13 @@ public class BluetoothService {
             try {
                 // Connect to the remote device through the socket. This call blocks
                 // until it succeeds or throws an exception.
-                //Toast.makeText(context, "TRYING TO CONNECT", Toast.LENGTH_SHORT).show();
                 mmSocket.connect();
             } catch (IOException connectException) {
                 // Unable to connect; close the socket and return.
                 Toast.makeText(context, "UNABLE TO CONNECT", Toast.LENGTH_SHORT).show();
                 Toast.makeText(context, connectException.toString(), Toast.LENGTH_SHORT).show();
                 try {
+                    // Close the socket so device is not kept busy
                     mmSocket.close();
                 } catch (IOException closeException) {
                     Toast.makeText(context, "COULD NOT CLOSE SOCKET", Toast.LENGTH_SHORT).show();
@@ -133,11 +141,9 @@ public class BluetoothService {
 
             // The connection attempt succeeded. Perform work associated with
             // the connection in a separate thread.
-            //Toast.makeText(context, "worked!!!", Toast.LENGTH_SHORT).show();
+
+            // All work pulling information done through the connected thread
             connectedThread = new ConnectedThread(mmSocket);
-            //Toast.makeText(context, "assigned " + Boolean.toString(connectedThread == null), Toast.LENGTH_SHORT).show();
-            //connectedThread.run();
-            //this.cancel();
         }
 
         // Closes the client socket and causes the thread to finish.
@@ -154,8 +160,7 @@ public class BluetoothService {
         private final BluetoothSocket mmSocket;
         private final InputStream mmInStream;
         private final OutputStream mmOutStream;
-        private byte[] mmBuffer; // mmBuffer store for the stream
-
+        private byte[] mmBuffer; // stores the data pulled from the scale
         public ConnectedThread(BluetoothSocket socket) {
             mmSocket = socket;
             InputStream tmpIn = null;
@@ -176,8 +181,6 @@ public class BluetoothService {
 
             mmInStream = tmpIn;
             mmOutStream = tmpOut;
-
-            //Toast.makeText(context, "here 4", Toast.LENGTH_SHORT).show();
         }
 
         public void run() {
@@ -185,22 +188,16 @@ public class BluetoothService {
             int numBytes; // bytes returned from read()
 
             // Keep listening to the InputStream until an exception occurs.
-            //while (true) {
-                try {
-                    // Read from the InputStream.
-                    // can speed up pull time by checking if data is available
-                    if (mmInStream.available() >= 2) {
-                        numBytes = mmInStream.read(mmBuffer);
-                        /*
-                        for (int i = 0; i < numBytes; i++) {
-                            Toast.makeText(context, Byte.toString(mmBuffer[i]), Toast.LENGTH_SHORT).show();
-                        }*/
-                        currWeight = BluetoothHelper.parseBytesNutriscale(mmBuffer, numBytes);
-                        //Toast.makeText(context, "numBYTES: " + numBytes, Toast.LENGTH_SHORT).show();
-                        //Toast.makeText(context, "FIRST: " + (mmBuffer[0] & 0xf) * 256, Toast.LENGTH_SHORT).show();
-                        //Toast.makeText(context, "SECOND: " + Integer.toString(((int) mmBuffer[1]) & 0xff), Toast.LENGTH_SHORT).show();
-                        Toast.makeText(context, "WEIGHT: " + currWeight, Toast.LENGTH_SHORT).show();
-                        //Toast.makeText(context, "WEIGHT: " + Integer.toString((mmBuffer[0] & 0xf) * 256 + ((int) mmBuffer[1]) & 0xff), Toast.LENGTH_SHORT).show();
+            try {
+                // Read from the InputStream.
+                // can speed up pull time by checking if data is available
+                // TODO: Below is functionality for pulling and parsing data from a bluetooth scale
+                if (mmInStream.available() >= 2) {
+                    numBytes = mmInStream.read(mmBuffer);   // Tells how many bytes were pulled from the input stream
+
+                    // TODO: Any changes to parsing of data from scale should be done in BluetoothHelper
+                    currWeight = BluetoothHelper.parseBytesNutriscale(mmBuffer, numBytes);  // TODO: <--- Change this line to parse different streams
+                    Toast.makeText(context, "WEIGHT: " + currWeight, Toast.LENGTH_SHORT).show();
                     } else {
                         // Alert that reading was not taken.
                         Toast.makeText(context, "No change detected. Please check if the scale is on and re-weigh the item.", Toast.LENGTH_SHORT).show();
@@ -210,18 +207,14 @@ public class BluetoothService {
                     Toast.makeText(context, "Disconnected from scale: please restart the scale", Toast.LENGTH_SHORT).show();
                     connectedThread.cancel();
                     connectedThread = null;
-                    //break;
                 } catch (NullPointerException e) {
                     Toast.makeText(context, "input stream null " + e.toString(), Toast.LENGTH_SHORT).show();
-                    //break;
                 } catch (Exception e) {
                     Toast.makeText(context, "jesus " + e.toString(), Toast.LENGTH_SHORT).show();
-                    //break;
                 }
-            //}
         }
 
-        // Call this method from the main activity to shut down the connection.
+        // Call this method to shut down the connection.
         public void cancel() {
             try {
                 mmSocket.close();

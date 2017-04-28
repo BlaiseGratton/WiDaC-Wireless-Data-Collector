@@ -27,7 +27,6 @@ public class SearchActivity extends AppCompatActivity {
     
     private Sample sample;
     DBConnection db;
-    private int itemNumber;
 
     public BluetoothService bluetoothService;
     public BluetoothDevice device = null;
@@ -36,15 +35,13 @@ public class SearchActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
-        db = new DBConnection();
-        Intent i = this.getIntent();
 
         Log.d("Search", "Searching on ID: " + Session.searchQuery);
-        //db.getSample(Session.searchQuery, sampleCallback);
+
+        // Pull data from database
         Session.asyncPullNewEntry(Session.searchQuery, sampleCallback);
 
-        //itemNumber = 123;
-
+        // Check if have existing connection and close it to reopen below (checks if device has turned off)
         if (bluetoothService != null) {
             bluetoothService.closeThread();
         }
@@ -56,7 +53,9 @@ public class SearchActivity extends AppCompatActivity {
             // There are paired devices. Get the name and address of each paired device.
             for (BluetoothDevice pairedDv : pairedDevices) {
                 String deviceName = pairedDv.getName();
-                // String deviceHardwareAddress = device.getAddress(); // MAC address
+                // String deviceHardwareAddress = device.getAddress(); // MAC address (use if don't want to connect by name of device)
+
+                // Check if device is the one selected in settings page and connect if it is
                 if (deviceName.equals(Session.deviceName)) {
                     device = pairedDv;
                     bluetoothService = new BluetoothService(this);
@@ -65,8 +64,10 @@ public class SearchActivity extends AppCompatActivity {
             }
         }
 
+        // Alert which device connection will be attempted with
         Toast.makeText(this, Session.deviceName, Toast.LENGTH_SHORT).show();
 
+        // Listens to device, alerts user when device turns off after a timeout
         IntentFilter filter = new IntentFilter();
         filter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
         filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED);
@@ -99,13 +100,14 @@ public class SearchActivity extends AppCompatActivity {
             }
         }
     };
-    
+
+    // Runs when bluetooth button clicked (pulls data from scale)
     public void onUpdateBluetoothButtonClick(View v) {
         ((TextView)findViewById(R.id.itemWeight)).setText("Weight: 234g");
         runBluetooth();
-        //Toast.makeText(this, "Weight updated", Toast.LENGTH_SHORT).show();
     }
 
+    // Reopens a connection with the device if it is on
     public void onReconnectClick(View v) {
         Toast.makeText(this, "Reconnecting", Toast.LENGTH_SHORT).show();
         bluetoothService.reconnect(device);
@@ -164,14 +166,18 @@ public class SearchActivity extends AppCompatActivity {
         weightText.setText("Weight: " + BluetoothService.currWeight + "g");
     }
 
+    // Called when database returns data on requested sample
     Callback sampleCallback = new Callback<Sample>(){
-
         @Override
         public void onResponse(Call<Sample> call, Response<Sample> response) {
             int code = response.code();
             if (code == 200) {
                 Log.d("Search:DBConnection", "Body: " + response.body());
+
+                // Response body should contain the information of the sample pulled from the database
                 SearchActivity.this.sample = response.body();
+
+                // Update screen with the information from the database
                 TextView itemName = (TextView) findViewById(R.id.item_name);
                 itemName.setText(sample.getCompositeKey());
                 TextView itemWeight = (TextView) findViewById(R.id.itemWeight);

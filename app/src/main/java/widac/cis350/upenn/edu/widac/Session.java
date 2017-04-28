@@ -33,9 +33,9 @@ public class Session {
     private static Callback<Sample> tempCB;
     private static String currId;
 
-    public static String deviceName = null;
+    public static String deviceName = null; // Bluetooth device to connect to
 
-    public static String searchQuery;
+    public static String searchQuery;   // Composite id of sample to pull from DB for searching
 
     private Session() {}
 
@@ -54,15 +54,6 @@ public class Session {
         return true;
     }
 
-    public static boolean updateEntry(String oldID, String newID) {
-        if (entries.contains(oldID)) {
-            entries.remove(oldID);
-            entries.add(newID);
-            return true;
-        }
-        return false;
-    }
-
     public static Set<String> getCurrentSessionIDs() { // Consider rename to getCurrentSession
         return entries;
     }
@@ -70,31 +61,18 @@ public class Session {
     /*
         DATABASE INTERACTIONS
      */
-    // CHANGING CONNECTION
     public static DBConnection getDBC() { return DBC; };
-    public static void changeDBC(String newDBC) {
-        // Somehow update DBC
-    }
-    // PULLING METHODS
-    // Below method now defunct
-    public static Set<Sample> pullFromDB() {
-        Set<Sample> samples = new HashSet<Sample>();
-        // Check for elements that were deleted?
-        for (String id: entries) {
-            samples.add(DBC.retrieveSample(id));
-        }
-        return samples;
-    }
 
+    // PULLING METHOD
     public static void asyncPullFromDB(Callback<Sample> callback) {
-        Set<Sample> samples = new HashSet<Sample>();
-
         // Begin staging samples
         // Set to execute callback when all entries received
         Log.d("Session", "Begin Staging: " + entries.size() + " to stage");
         Log.d("Session", "Callback: " + callback);
+        // Alert how many objects will be pulling and what to do when finished
         SampleStaging.beginStaging(entries.size(), callback);
         Callback<Sample> cb = SampleStaging.getStageCB();
+        // Put out requests for all the data, one collected original cb will be called
         for (String id: entries) {
             DBC.getSample(id, cb);
         }

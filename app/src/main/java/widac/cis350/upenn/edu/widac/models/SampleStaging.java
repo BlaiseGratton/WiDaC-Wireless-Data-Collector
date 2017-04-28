@@ -36,8 +36,8 @@ public class SampleStaging {
         return stageCB;
     }
 
+    // Keeps track of how many objects to pull and how many objects have been pulled so far
     static Callback stageCB = new Callback<Sample>(){
-
         @Override
         public void onResponse(Call<Sample> call, Response<Sample> response) {
             int code = response.code();

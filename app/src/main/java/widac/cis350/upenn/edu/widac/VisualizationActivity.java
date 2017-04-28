@@ -3,6 +3,7 @@ package widac.cis350.upenn.edu.widac;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.Entry;
@@ -32,23 +33,17 @@ public class VisualizationActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // Most likely want to get session data from intent
+        // Set the layout
         setContentView(R.layout.activity_visualization);
 
-        /**
-         * TESTING METHOD
-         **/
-        //Session.initalizeTest();
-        /**
-         * Keep
-         **/
+        // Create the pie chart to be populated
         pieChart = (PieChart) findViewById(R.id.typesCollectedPieChart);
+        // Make a request to the database for the data
         Session.asyncPullFromDB(collectEntries);
-        //createChart();
     }
 
-    // Can probably abstract this in some way in the future
+    // Gets entry data from database
+    // Samples are stored in a "staging area", when this is called are ready to be retrieved
     Callback collectEntries = new Callback<Sample>(){
         @Override
         public void onResponse(Call<Sample> call, Response<Sample> response) {
@@ -58,7 +53,8 @@ public class VisualizationActivity extends AppCompatActivity {
                 parseArtifacts(SampleStaging.retrieveSamples());
                 createChart();
             } else {
-                // Could not create session report
+                // Could not create visualization
+                Toast.makeText(VisualizationActivity.this, "Unable to pull full database", Toast.LENGTH_SHORT).show();
                 Log.d("VisualizationActivity", "Did not work: " + String.valueOf(code));
             }
         }
@@ -72,14 +68,12 @@ public class VisualizationActivity extends AppCompatActivity {
     // Build a chart showing the various pieces collected during the current session
     private void createChart() {
         Log.d("VisualizationActivity", "createChart");
-        // Create generic interface in the future
-        //parseArtifacts(Session.pullFromDB());
-
         List<PieEntry> entries = new ArrayList<>();
 
         // Convert data from session into data workable with PieChart
-        // Add checking for empty session?
         Log.d("Visualization", "createChart: Populating with " + chartData.keySet().size() );
+
+        // Populate the pie chart with recovered entries
         for (String k: chartData.keySet()) {
             Log.d("Visualization", "createChart: Adding entry=" + k + ", " + chartData.get(k));
             entries.add(new PieEntry(chartData.get(k), k));
@@ -88,8 +82,8 @@ public class VisualizationActivity extends AppCompatActivity {
         // Add data to the PieChart
         PieDataSet set = new PieDataSet(entries, "Session Results");
         set.setSliceSpace(2);
-        //set.setColors(ColorTemplate.VORDIPLOM_COLORS);
-        //int color = getResources().getColor(R.color.chartColor);
+
+        // Define default colors for materials
         set.setColors(new int[] {getResources().getColor(android.R.color.holo_blue_dark),
                                  getResources().getColor(android.R.color.holo_green_dark),
                                  getResources().getColor(android.R.color.holo_orange_dark),
@@ -103,6 +97,7 @@ public class VisualizationActivity extends AppCompatActivity {
     private void parseArtifacts(Set<Sample> artifacts) {
         Log.d("VisualizationActivity", "parseArtifacts: " + artifacts.size());
 
+        // Store the recovered data from the database
         Iterator<Sample> i = artifacts.iterator();
         while (i.hasNext()) {
             Sample d = i.next();
@@ -112,25 +107,5 @@ public class VisualizationActivity extends AppCompatActivity {
                 chartData.put(d.getMaterial(), 1);
             }
         }
-    }
-
-//    private class ChartData {
-//        String type;
-//        int frequency;
-//    }
-
-    // Assume this function will be abstracted into an api in the future
-    private Set<DummyEntry> pullFromDatabase(Set<String> ids) {
-        // Dummy Data for testing
-        String[] types = {"A", "B", "C"};
-        Set<DummyEntry> entries = new HashSet<DummyEntry>();
-
-        for (String id: ids) {
-            String type = types[(int)(Math.random() * 3)];
-            DummyEntry d = new DummyEntry(id, type, "DUMMY", -1, -1);
-            Log.d("Visualization", "pullFromDatabase: entry created of type: " + type);
-            entries.add(d);
-        }
-        return entries;
     }
 }
