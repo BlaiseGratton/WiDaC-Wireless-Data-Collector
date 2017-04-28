@@ -33,8 +33,6 @@ public class Session {
     private static Callback<Sample> tempCB;
     private static String currId;
 
-    //public static BluetoothService bluetoothService;
-    //public static BluetoothDevice device = null;
     public static String deviceName = null;
 
     public static String searchQuery;
@@ -103,19 +101,6 @@ public class Session {
     }
 
     // Pull an entry from the database
-    public static Sample pullNewEntryFromDB(String id) {
-        // add entry to current session and return data
-        Log.d("Session", "Id: " + id);
-        Log.d("Session", "Session size: " + entries.size());
-
-        // Add sample to session if exists
-        Sample s = DBC.retrieveSample(id);
-        if (s != null) {
-            entries.add(id);
-        }
-        return s;
-    }
-
     public static void asyncPullNewEntry(String id, Callback<Sample> callback) {
         Log.d("Session", "Id: " + id);
         Log.d("Session", "Session size: " + entries.size());
@@ -155,22 +140,4 @@ public class Session {
             Log.d("Session:DBConnection", "Get sample failure");
         }
     };
-    // *********************************************************************************************
-    // TESTING-ONLY METHOD TO POPULATE SESSION WITH DUMMY DATA
-    public static void initalizeTest() {
-        Log.d("Session", "initializeTest: initializing");
-        entries.clear();
-        entries.add("a1");
-        entries.add("b1");
-        entries.add("a2");
-        entries.add("c1");
-        entries.add("x1");
-        entries.add("e1");
-        entries.add("r2");
-        entries.add("t1");
-        entries.add("y1");
-        entries.add("u1");
-        entries.add("i2");
-        entries.add("o1");
-    }
 }

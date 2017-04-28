@@ -1,7 +1,6 @@
 package widac.cis350.upenn.edu.widac.models;
 
 import android.util.Log;
-import android.widget.TextView;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -9,8 +8,6 @@ import java.util.Set;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import widac.cis350.upenn.edu.widac.R;
-import widac.cis350.upenn.edu.widac.SearchActivity;
 
 /**
  * Created by J. Patrick Taggart on 3/24/2017.
