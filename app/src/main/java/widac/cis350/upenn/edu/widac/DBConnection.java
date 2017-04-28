@@ -27,6 +27,12 @@ public class DBConnection {
     public DBConnection() {
         retrofit = RetrofitClient.getClient();
         widacService = retrofit.create(WidacService.class);
+
+//        Sample sample1 = new Sample(1, 2, 3, 1, "Glass", 5.0, 10.0, 1);
+//        Sample sample2 = new Sample(1, 2, 3, 1, "Ceramic", 0.07)
+//        Sample sample3 = new Sample(1, 2, 5, 1, "Metal", 7)
+//        Sample sample4 = new Sample(1, 3, 6, 10, "Clay", 0.34)
+
     }
 
     public void addNewSample(Sample newSample) {
@@ -56,6 +62,4 @@ public class DBConnection {
         Call<Sample> callSample = widacService.getSample(id);
         callSample.enqueue(callback);
     }
-
-
 }

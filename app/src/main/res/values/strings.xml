@@ -14,4 +14,5 @@
     <string name="prompt_weight">Enter new weight</string>
     <string name="sessionReport">Session Report</string>
     <string name="update_weight">Select a method to update weight:</string>
+    <string name="spinnerHint">area_easting, area_northing, context_number, sample_number</string>
 </resources>

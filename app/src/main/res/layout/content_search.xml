@@ -36,18 +36,7 @@
                 android:onClick="onPrevButtonClick"
                 android:text="Prev"
                 android:textStyle="bold"
-                android:layout_weight="33"/>
-
-            <TextView
-                android:text="Item 123"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/item_name"
-                android:gravity="center_horizontal"
-                android:textSize="10pt"
-                android:layout_alignTop="@+id/prev_item"
-                android:layout_alignParentStart="true"
-                android:layout_weight="66"/>
+                android:layout_weight="50"/>
 
             <Button
                 android:id="@+id/next_item"
@@ -58,7 +47,47 @@
                 android:text="Next"
                 android:textStyle="bold"
                 android:layout_alignParentEnd="true"
-                android:layout_weight="33"/>
+                android:layout_weight="50"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="1">
+
+            <Spinner
+                android:id="@+id/area_easting"
+                android:layout_weight=".25"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:drawable/btn_dropdown"
+                android:spinnerMode="dropdown" />
+
+            <Spinner
+                android:id="@+id/area_northing"
+                android:layout_weight=".25"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:drawable/btn_dropdown"
+                android:spinnerMode="dropdown" />
+
+            <Spinner
+                android:id="@+id/context_number"
+                android:layout_weight=".25"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:drawable/btn_dropdown"
+                android:spinnerMode="dropdown" />
+
+            <Spinner
+                android:id="@+id/sample_number"
+                android:layout_weight=".25"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:drawable/btn_dropdown"
+                android:spinnerMode="dropdown" />
 
         </LinearLayout>
 
