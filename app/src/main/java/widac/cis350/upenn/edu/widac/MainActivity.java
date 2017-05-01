@@ -10,11 +10,14 @@ import android.support.v7.internal.widget.AdapterViewCompat;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -30,90 +33,339 @@ public class MainActivity extends AppCompatActivity {
     
     public final static String COMPOSITE_KEY = "compositeKey";
 
-    Spinner area_easting, area_northing, context_number, sample_number;
+    private final static String AREA_EASTING_HINT = "Area Easting";
+    private final static String AREA_NORTHING_HINT = "Area Northing";
+    private final static String CONTEXT_NUMBER_HINT = "Context Number";
+    private final static String SAMPLE_NUMBER_HINT = "Sample Number";
+
+    private DBSpinner area_easting, area_northing, context_number, sample_number;
+    private ProgressBar progressBar;
+    private Button search, settings, visualization, sessionsReport;
+
+    private List<String> areaEastingData, areaNorthingData, contextNumberData, sampleNumberData;
+    private String areaEastingSelection, areaNorthingSelection, contextNumberSelection, sampleNumberSelection;
+    ArrayAdapter<String> areaEastingAdapter, areaNorthingAdapter, contextNumberAdapter, sampleNumberAdapter;
+    WidacService service;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        areaEastingData = new ArrayList<>();
+        areaNorthingData = new ArrayList<>();
+        contextNumberData = new ArrayList<>();
+        sampleNumberData = new ArrayList<>();
+
+        service = RetrofitClient.getClient().create(WidacService.class);
+
+        initializeProgressBar();
+        initializeButtons();
         initializeSpinners();
         Session.newSession();
     }
 
-    private void initializeSpinners() {
-//        WidacService service = RetrofitClient.getClient().create(WidacService.class);
-//        Call<Samples> call = service.getAllSamples();
-//        ArrayList<String> sampleContextNumbers;
-//        call.enqueue(new Callback<Samples>() {
-//
-//            @Override
-//            public void onResponse(Call<Samples> call, Response<Samples> response) {
-//                Samples samples = response.body();
-////                sampleContextNumbers = (ArrayList<String>) samples.getContextNumbers();
-//            }
-//
-//            @Override
-//            public void onFailure(Call<Samples> call, Throwable t) {
-//                System.out.println("Failure");
-//            }
-//        });
+    private void initializeButtons() {
+        search = (Button) findViewById(R.id.search_button);
+        search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onSearchButtonClick();
+            }
+        });
 
-//        area_easting = (Spinner)findViewById(R.id.area_easting_main);
-//        String[] items1 = new String[]{"1", "2", "3", "5"};
-//        ArrayAdapter<String> adapter1 = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, items1);
-//        area_easting.setAdapter(adapter1);
-//        area_easting.setOnItemSelectedListener(new AdapterViewCompat.OnItemSelectedListener() {
-//            @Override
-//            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-//                // your code here
-//            }
-//
-//            @Override
-//            public void onNothingSelected(AdapterView<?> parentView) {
-//                // your code here
-//            }
-//
-//        });
+        settings = (Button) findViewById(R.id.settings_button);
+        settings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onSettingsButtonClick();
+            }
+        });
 
-        area_northing = (Spinner)findViewById(R.id.area_northing_main);
-        String[] items2 = new String[]{"77", "16", "13", "45"};
-        ArrayAdapter<String> adapter2 = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, items2);
-        area_northing.setAdapter(adapter2);
+        visualization = (Button) findViewById(R.id.visualization_button);
+        visualization.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onVisualizationButtonClick();
+            }
+        });
 
-        context_number = (Spinner)findViewById(R.id.context_number_main);
-        String[] items3 = new String[]{"100", "87"};
-        ArrayAdapter<String> adapter3 = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, items3);
-        context_number.setAdapter(adapter3);
-
-        sample_number = (Spinner)findViewById(R.id.sample_number_main);
-        String[] items4 = new String[]{"1"};
-        ArrayAdapter<String> adapter4 = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, items4);
-        sample_number.setAdapter(adapter4);
-
+        sessionsReport = (Button) findViewById(R.id.sessionReport_button);
+        sessionsReport.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onSessionReportButtonClick();
+            }
+        });
     }
 
-    public void onSearchButtonClick(View v) {
+    private void initializeProgressBar() {
+        progressBar = (ProgressBar) findViewById(R.id.progress_bar_main);
+        progressBar.setIndeterminate(true);
+    }
+
+    private void initializeSpinners() {
+        sample_number = (DBSpinner) findViewById(R.id.sample_number_main);
+        sampleNumberAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_dropdown_item, sampleNumberData);
+        sample_number.setAdapter(sampleNumberAdapter);
+        sample_number.setOnItemSelectedEvenIfUnchangedListener(new AdapterView.OnItemSelectedListener() {
+
+
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                sampleNumberSelection = (String) adapterView.getItemAtPosition(i);
+                if (!sampleNumberSelection.equalsIgnoreCase(SAMPLE_NUMBER_HINT)) {
+                    Toast toast = Toast.makeText(getApplicationContext(), "Selected composite key: " +
+                            areaEastingSelection + "-" + areaNorthingSelection + "-"
+                            + contextNumberSelection + "-" + sampleNumberSelection, Toast.LENGTH_SHORT);
+                    toast.show();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        context_number = (DBSpinner) findViewById(R.id.context_number_main);
+        contextNumberAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_dropdown_item, contextNumberData);
+        context_number.setAdapter(contextNumberAdapter);
+        context_number.setOnItemSelectedEvenIfUnchangedListener(new AdapterView.OnItemSelectedListener() {
+
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                contextNumberSelection = (String) adapterView.getItemAtPosition(i);
+                if (!contextNumberSelection.equalsIgnoreCase(CONTEXT_NUMBER_HINT)) {
+                    // empty all lists for subsequent dropdowns
+                    sampleNumberData.clear();
+                    sampleNumberAdapter.notifyDataSetChanged();
+
+                    Toast toast = Toast.makeText(getApplicationContext(), "Selected context number: " +
+                            contextNumberSelection, Toast.LENGTH_SHORT);
+                    toast.show();
+                    refreshSampleNumberData();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        area_northing = (DBSpinner) findViewById(R.id.area_northing_main);
+        areaNorthingAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_dropdown_item, areaNorthingData);
+        area_northing.setAdapter(areaNorthingAdapter);
+        area_northing.setOnItemSelectedEvenIfUnchangedListener(new AdapterView.OnItemSelectedListener() {
+
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                areaNorthingSelection = (String) adapterView.getItemAtPosition(i);
+                if (!areaNorthingSelection.equalsIgnoreCase(AREA_NORTHING_HINT)) {
+                    // empty all lists for subsequent dropdowns
+                    contextNumberData.clear();
+                    sampleNumberData.clear();
+                    contextNumberAdapter.notifyDataSetChanged();
+                    sampleNumberAdapter.notifyDataSetChanged();
+
+                    Toast toast = Toast.makeText(getApplicationContext(), "Selected area_northing: " +
+                            areaNorthingSelection, Toast.LENGTH_SHORT);
+                    toast.show();
+                    refreshContextNumberData();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+
+        // initialize the area_easting spinner and load initial data
+        area_easting = (DBSpinner) findViewById(R.id.area_easting_main);
+        progressBar.setVisibility(ProgressBar.VISIBLE);
+        areaEastingAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_dropdown_item, areaEastingData);
+        area_easting.setAdapter(areaEastingAdapter);
+        Call<Samples> call = service.getAllSamples();
+        call.enqueue(new Callback<Samples>() {
+
+            @Override
+            public void onResponse(Call<Samples> call, Response<Samples> response) {
+                progressBar.setVisibility(ProgressBar.INVISIBLE);
+                Samples samples = response.body();
+                List<String> compositeKeys = samples.getCompositeKeys();
+                areaEastingData.clear();
+                Set<String> uniqueAreaEastings = new HashSet<>();
+                for (String compositeKey: compositeKeys) {
+                    String[] splitComposite = compositeKey.split("-");
+                    if (!uniqueAreaEastings.contains(splitComposite[0])) {
+                        areaEastingData.add(splitComposite[0]);
+                    }
+                    uniqueAreaEastings.add(splitComposite[0]);
+                }
+                areaEastingData.add(0, AREA_EASTING_HINT);
+                areaEastingAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onFailure(Call<Samples> call, Throwable t) {
+                progressBar.setVisibility(ProgressBar.INVISIBLE);
+                System.out.println("Failure");
+            }
+        });
+
+        // on selecting an area_easting, clear subsequent spinners and load data for area_northing
+        area_easting.setOnItemSelectedEvenIfUnchangedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                areaEastingSelection = (String) adapterView.getItemAtPosition(i);
+                if (!areaEastingSelection.equalsIgnoreCase(AREA_EASTING_HINT)) {
+                    // empty all lists for subsequent dropdowns
+                    areaNorthingData.clear();
+                    contextNumberData.clear();
+                    sampleNumberData.clear();
+                    areaNorthingAdapter.notifyDataSetChanged();
+                    contextNumberAdapter.notifyDataSetChanged();
+                    sampleNumberAdapter.notifyDataSetChanged();
+
+                    Toast toast = Toast.makeText(getApplicationContext(), "Selected area_easting: " +
+                            areaEastingSelection, Toast.LENGTH_SHORT);
+                    toast.show();
+                    refreshAreaNorthingData();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+                System.out.println("Nothing Selected");
+            }
+        });
+    }
+
+    private void refreshAreaNorthingData() {
+        progressBar.setVisibility(ProgressBar.VISIBLE);
+        Call<Samples> call = service.getAllSamples(Integer.parseInt(areaEastingSelection), null, null, null);
+        call.enqueue(new Callback<Samples>() {
+
+            @Override
+            public void onResponse(Call<Samples> call, Response<Samples> response) {
+                progressBar.setVisibility(ProgressBar.INVISIBLE);
+                Samples samples = response.body();
+                List<String> compositeKeys = samples.getCompositeKeys();
+                areaNorthingData.clear();
+                Set<String> uniqueValues = new HashSet<>();
+                for (String compositeKey: compositeKeys) {
+                    String[] splitComposite = compositeKey.split("-");
+                    if (splitComposite[0].equalsIgnoreCase(areaEastingSelection) &&
+                            !uniqueValues.contains(splitComposite[1])) {
+                        areaNorthingData.add(splitComposite[1]);
+                    }
+                    uniqueValues.add(splitComposite[1]);
+                }
+                areaNorthingData.add(0, AREA_NORTHING_HINT);
+                areaNorthingAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onFailure(Call<Samples> call, Throwable t) {
+                progressBar.setVisibility(ProgressBar.INVISIBLE);
+                System.out.println("Failure");
+            }
+        });
+    }
+
+    private void refreshContextNumberData() {
+        progressBar.setVisibility(ProgressBar.VISIBLE);
+        Call<Samples> call = service.getAllSamples(Integer.parseInt(areaEastingSelection),
+                Integer.parseInt(areaNorthingSelection), null, null);
+        call.enqueue(new Callback<Samples>() {
+
+            @Override
+            public void onResponse(Call<Samples> call, Response<Samples> response) {
+                progressBar.setVisibility(ProgressBar.INVISIBLE);
+                Samples samples = response.body();
+                List<String> compositeKeys = samples.getCompositeKeys();
+                contextNumberData.clear();
+                Set<String> uniqueValues = new HashSet<>();
+                for (String compositeKey: compositeKeys) {
+                    String[] splitComposite = compositeKey.split("-");
+                    if (splitComposite[0].equalsIgnoreCase(areaEastingSelection) &&
+                            splitComposite[1].equalsIgnoreCase(areaNorthingSelection) &&
+                            !uniqueValues.contains(splitComposite[2])) {
+                        contextNumberData.add(splitComposite[2]);
+                    }
+                    uniqueValues.add(splitComposite[2]);
+                }
+                contextNumberData.add(0, CONTEXT_NUMBER_HINT);
+                contextNumberAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onFailure(Call<Samples> call, Throwable t) {
+                progressBar.setVisibility(ProgressBar.INVISIBLE);
+                System.out.println("Failure");
+            }
+        });
+    }
+
+    private void refreshSampleNumberData() {
+        progressBar.setVisibility(ProgressBar.VISIBLE);
+        Call<Samples> call = service.getAllSamples(Integer.parseInt(areaEastingSelection),
+                Integer.parseInt(areaNorthingSelection), Integer.parseInt(contextNumberSelection),
+                null);
+        call.enqueue(new Callback<Samples>() {
+
+            @Override
+            public void onResponse(Call<Samples> call, Response<Samples> response) {
+                progressBar.setVisibility(ProgressBar.INVISIBLE);
+                Samples samples = response.body();
+                List<String> compositeKeys = samples.getCompositeKeys();
+                sampleNumberData.clear();
+                Set<String> uniqueValues = new HashSet<>();
+                for (String compositeKey: compositeKeys) {
+                    String[] splitComposite = compositeKey.split("-");
+                    if (splitComposite[0].equalsIgnoreCase(areaEastingSelection) &&
+                            splitComposite[1].equalsIgnoreCase(areaNorthingSelection) &&
+                            splitComposite[2].equalsIgnoreCase(contextNumberSelection) &&
+                            !uniqueValues.contains(splitComposite[3])) {
+                        sampleNumberData.add(splitComposite[3]);
+                    }
+                    uniqueValues.add(splitComposite[3]);
+                }
+                sampleNumberData.add(0, SAMPLE_NUMBER_HINT);
+                sampleNumberAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onFailure(Call<Samples> call, Throwable t) {
+                progressBar.setVisibility(ProgressBar.INVISIBLE);
+                System.out.println("Failure");
+            }
+        });
+    }
+
+    public void onSearchButtonClick() {
         Intent i = new Intent(this, SearchActivity.class);
-//        String queryKey = ((EditText)findViewById(R.id.searchBox)).getText().toString();
-//        i.putExtra(COMPOSITE_KEY, queryKey);
-//        EditText editText = (EditText) findViewById(R.id.searchBox);
-//        String queryKey = editText.getText().toString();
-        //i.putExtra(COMPOSITE_KEY, queryKey);
-//        i.putExtra("id", queryKey);
         startActivityForResult(i, 1);
     }
     
-    public void onSettingsButtonClick(View v) {
+    public void onSettingsButtonClick() {
         Intent i = new Intent(this, SettingsActivity.class);
         startActivityForResult(i, 1);
     }
     
-    public void onVisualizationButtonClick(View v) {
+    public void onVisualizationButtonClick() {
         Intent i = new Intent(this, VisualizationActivity.class);
         startActivityForResult(i, 1);
     }
     
-    public void onSessionReportButtonClick(View v) {
+    public void onSessionReportButtonClick() {
         Intent i = new Intent(this, SessionReportActivity.class);
         startActivityForResult(i, 1);
     }

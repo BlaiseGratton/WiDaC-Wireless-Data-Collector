@@ -15,4 +15,5 @@
     <string name="sessionReport">Session Report</string>
     <string name="update_weight">Select a method to update weight:</string>
     <string name="spinnerHint">area_easting, area_northing, context_number, sample_number</string>
+    <string name="dropdown_hint">Select Area Easting to begin</string>
 </resources>
