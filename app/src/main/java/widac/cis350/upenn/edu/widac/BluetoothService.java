@@ -14,8 +14,6 @@ import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.util.UUID;
 
-import widac.cis350.upenn.edu.widac.models.BluetoothHelper;
-
 /**
  * Created by Matt on 3/29/2017.
  */

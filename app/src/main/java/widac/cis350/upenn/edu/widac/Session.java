@@ -27,7 +27,7 @@ import widac.cis350.upenn.edu.widac.models.SampleStaging;
 
 public class Session {
     private static DBConnection DBC = new DBConnection();
-    private static Set<String> entries =  new HashSet<String>();
+    private static Set<String> entries =  new HashSet<>();
 
     // Temp
     private static Callback<Sample> tempCB;
@@ -80,7 +80,7 @@ public class Session {
     // PULLING METHODS
     // Below method now defunct
     public static Set<Sample> pullFromDB() {
-        Set<Sample> samples = new HashSet<Sample>();
+        Set<Sample> samples = new HashSet<>();
         // Check for elements that were deleted?
         for (String id: entries) {
             samples.add(DBC.retrieveSample(id));

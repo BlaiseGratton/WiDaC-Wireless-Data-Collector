@@ -28,7 +28,6 @@ import widac.cis350.upenn.edu.widac.models.SampleStaging;
 public class SessionReportActivity extends AppCompatActivity {
     private Set<String> currentSession; // List of ids
     private Map<String, TypeData> types = new HashMap<String, TypeData>();
-    DBConnection DBC = new DBConnection();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -27,26 +27,6 @@ public class DBConnection {
     public DBConnection() {
         retrofit = RetrofitClient.getClient();
         widacService = retrofit.create(WidacService.class);
-
-//        Sample sample1 = new Sample(1, 2, 3, 1, "Glass", 5.0, 10.0, 1);
-//        Sample sample2 = new Sample(1, 2, 3, 1, "Ceramic", 0.07)
-//        Sample sample3 = new Sample(1, 2, 5, 1, "Metal", 7)
-//        Sample sample4 = new Sample(1, 3, 6, 10, "Clay", 0.34)
-
-    }
-
-    public void addNewSample(Sample newSample) {
-//        Sample newSample = new Sample(344, 120, 1, 2, "ceramic", 0.002);
-    }
-
-    public void updateSampleMaterial(String compositeKey, String newMaterial) {
-//        String compositeKey = "344-120-1-2";
-//        String newMaterial = "ceramic";
-    }
-
-    public void updateSampleWeight(String compositeKey, double newWeight) {
-//        String compositeKey = "344-120-1-2";
-//        double newWeight = 0.002;
     }
 
     public Sample retrieveSample(String compositeKey) {

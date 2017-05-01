@@ -36,12 +36,10 @@ public class SearchActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
+
         db = new DBConnection();
         Intent i = this.getIntent();
-
-        //db.getSample(Session.searchQuery, sampleCallback);
         Session.asyncPullNewEntry(Session.searchQuery, sampleCallback);
-
         itemNumber = 123;
 
         if (bluetoothService != null) {
@@ -50,15 +48,11 @@ public class SearchActivity extends AppCompatActivity {
         bluetoothService = null;
         device = null;
 
-        String scaleAddress = "0F:03:14:0A:03:9B";
-        String scaleName = "nutriscale_1910";
-
         Set<BluetoothDevice> pairedDevices = BluetoothAdapter.getDefaultAdapter().getBondedDevices();
         if (pairedDevices.size() > 0) {
             // There are paired devices. Get the name and address of each paired device.
             for (BluetoothDevice pairedDv : pairedDevices) {
                 String deviceName = pairedDv.getName();
-                // String deviceHardwareAddress = device.getAddress(); // MAC address
                 if (deviceName.equals(Session.deviceName)) {
                     device = pairedDv;
                     bluetoothService = new BluetoothService(this);
@@ -66,13 +60,14 @@ public class SearchActivity extends AppCompatActivity {
                 }
             }
         }
+
         sample = db.retrieveSample(i.getStringExtra("compositeKey"));
         sample  = db.retrieveSample(i.getStringExtra("compositeKey"));
         TextView itemWeight = (TextView) findViewById(R.id.itemWeight);
         String displayWeight = (sample.getWeight() == 0) ? "No Data" : "" + sample.getWeight();
         itemWeight.setText(displayWeight);
 
-        Toast.makeText(this, Session.deviceName, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Connected to: " + Session.deviceName, Toast.LENGTH_SHORT).show();
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);

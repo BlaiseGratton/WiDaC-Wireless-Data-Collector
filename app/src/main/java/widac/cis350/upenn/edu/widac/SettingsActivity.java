@@ -4,32 +4,21 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.Settings;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 
 import widac.cis350.upenn.edu.widac.data.remote.WidacService;
 
-import static android.R.id.list;
-import static java.security.AccessController.getContext;
-import static widac.cis350.upenn.edu.widac.R.id.connectedDB;
-
 public class SettingsActivity extends AppCompatActivity {
     int REQUEST_PAIR_DEVICE = 1;
-    //Map<String, String> devices = new HashMap<>();
     String[] devices;
 
     @Override
@@ -37,20 +26,15 @@ public class SettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-<<<<<<< HEAD
 
         // Populate the currenlty paired devices list
         //Add currently paired devices to list
         getPairedDevices();
 
         ListView list = (ListView)findViewById(R.id.paired_devices_list);
-//        devices = new String[1];
-//        devices[0] = "test";
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(list.getContext(),
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(list.getContext(),
                 android.R.layout.simple_list_item_1, devices);
         list.setAdapter(adapter);
 
@@ -63,7 +47,6 @@ public class SettingsActivity extends AppCompatActivity {
                     for (BluetoothDevice device : pairedDevices) {
                         String deviceName = device.getName();
                         if (deviceName.equals(devices[position])) {
-                            //Session.device = device;
                             Session.deviceName = deviceName;
                         }
 
@@ -112,9 +95,8 @@ public class SettingsActivity extends AppCompatActivity {
         } else {
             Intent i = new Intent(this, SearchActivity.class);
             startActivityForResult(i, 1);
+            finish();
         }
-=======
->>>>>>> master
     }
 
 }

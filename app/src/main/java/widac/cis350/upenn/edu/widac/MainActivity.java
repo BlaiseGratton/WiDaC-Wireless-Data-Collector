@@ -1,22 +1,15 @@
 package widac.cis350.upenn.edu.widac;
 
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
-import android.support.v7.internal.widget.AdapterViewCompat;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
-import android.os.Handler;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -28,7 +21,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import widac.cis350.upenn.edu.widac.data.remote.RetrofitClient;
 import widac.cis350.upenn.edu.widac.data.remote.WidacService;
-import widac.cis350.upenn.edu.widac.models.Sample;
 import widac.cis350.upenn.edu.widac.models.Samples;
 
 public class MainActivity extends AppCompatActivity {

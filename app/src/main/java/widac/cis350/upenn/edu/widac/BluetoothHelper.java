@@ -1,4 +1,4 @@
-package widac.cis350.upenn.edu.widac.models;
+package widac.cis350.upenn.edu.widac;
 
 import static android.R.attr.x;
 
