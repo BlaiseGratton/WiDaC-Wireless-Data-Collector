@@ -1,7 +1,9 @@
 package widac.cis350.upenn.edu.widac.data.remote;
 
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 import widac.cis350.upenn.edu.widac.models.Sample;
@@ -27,4 +29,7 @@ public interface WidacService {
                                 @Query("area_northing") Integer area_northing,
                                 @Query("context_number") Integer context_number,
                                 @Query("sample_number") Integer sample_number);
+
+    @POST("/widac/api/v1.0/samples")
+    Sample postJson(@Body Sample body);
 }

@@ -7,10 +7,7 @@
     android:fitsSystemWindows="true"
     tools:context="widac.cis350.upenn.edu.widac.SearchActivity">
 
-    <?xml version="1.0" encoding="utf-8"?>
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <RelativeLayout
         android:id="@+id/content_search"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -18,9 +15,17 @@
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingTop="@dimen/activity_vertical_margin"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        tools:context="widac.cis350.upenn.edu.widac.SearchActivity"
-        tools:showIn="@layout/activity_search">
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_centerInParent="true"
+            android:visibility="invisible"
+            style="@style/Widget.AppCompat.ProgressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
 
         <LinearLayout
             android:id="@+id/search_layout"
@@ -41,7 +46,6 @@
                     style="?android:textAppearanceSmall"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:onClick="onPrevButtonClick"
                     android:text="Prev"
                     android:textStyle="bold"
                     android:layout_weight="50"/>
@@ -51,52 +55,39 @@
                     style="?android:textAppearanceSmall"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:onClick="onNextButtonClick"
                     android:text="Next"
                     android:textStyle="bold"
                     android:layout_weight="50"/>
 
             </LinearLayout>
 
-            <LinearLayout
+            <widac.cis350.upenn.edu.widac.DBSpinner
+                android:id="@+id/area_easting"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:weightSum="1">
+                android:layout_height="40dp"
+                android:background="@android:drawable/btn_dropdown"
+                android:spinnerMode="dropdown" />
 
-                <Spinner
-                    android:id="@+id/area_easting"
-                    android:layout_weight=".25"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@android:drawable/btn_dropdown"
-                    android:spinnerMode="dropdown" />
+            <widac.cis350.upenn.edu.widac.DBSpinner
+                android:id="@+id/area_northing"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@android:drawable/btn_dropdown"
+                android:spinnerMode="dropdown" />
 
-                <Spinner
-                    android:id="@+id/area_northing"
-                    android:layout_weight=".25"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@android:drawable/btn_dropdown"
-                    android:spinnerMode="dropdown" />
+            <widac.cis350.upenn.edu.widac.DBSpinner
+                android:id="@+id/context_number"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@android:drawable/btn_dropdown"
+                android:spinnerMode="dropdown" />
 
-                <Spinner
-                    android:id="@+id/context_number"
-                    android:layout_weight=".25"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@android:drawable/btn_dropdown"
-                    android:spinnerMode="dropdown" />
-
-                <Spinner
-                    android:id="@+id/sample_number"
-                    android:layout_weight=".25"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@android:drawable/btn_dropdown"
-                    android:spinnerMode="dropdown" />
-
-            </LinearLayout>
+            <widac.cis350.upenn.edu.widac.DBSpinner
+                android:id="@+id/sample_number"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@android:drawable/btn_dropdown"
+                android:spinnerMode="dropdown" />
 
             <ImageView
                 android:layout_width="match_parent"
@@ -108,7 +99,7 @@
                 android:id="@+id/imageView" />
 
             <TextView
-                android:text="Weight: 336g"
+                android:text="Weight: Not yet recorded"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
@@ -133,8 +124,6 @@
                     style="?android:textAppearanceSmall"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:onClick="onUpdateBluetoothButtonClick"
                     android:text="@string/update_bluetooth"
                     android:textStyle="bold"
                     android:layout_weight="75"/>
@@ -143,16 +132,11 @@
                     style="?android:textAppearanceSmall"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:onClick="onUpdateManualButtonClick"
                     android:text="@string/update_manual"
                     android:textStyle="bold"
                     android:layout_weight="5"/>
-
             </LinearLayout>
-
         </LinearLayout>
-
     </RelativeLayout>
 
     <android.support.design.widget.AppBarLayout

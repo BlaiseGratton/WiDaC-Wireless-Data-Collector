@@ -4,10 +4,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -25,7 +27,7 @@ import widac.cis350.upenn.edu.widac.models.Samples;
 
 public class MainActivity extends AppCompatActivity {
 
-    public final static String COMPOSITE_KEY = "compositeKey";
+    public final static String TAG = "Main Activity";
 
     private final static String AREA_EASTING_HINT = "Area Easting";
     private final static String AREA_NORTHING_HINT = "Area Northing";
@@ -35,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
     private DBSpinner area_easting, area_northing, context_number, sample_number;
     private ProgressBar progressBar;
     private Button search, settings, visualization, sessionsReport;
+    private EditText customAreaEasting, customAreaNorthing, customContextNumber, customSampleNumber;
 
     private List<String> areaEastingData, areaNorthingData, contextNumberData, sampleNumberData;
     private String areaEastingSelection, areaNorthingSelection, contextNumberSelection, sampleNumberSelection;
@@ -56,7 +59,15 @@ public class MainActivity extends AppCompatActivity {
         initializeProgressBar();
         initializeButtons();
         initializeSpinners();
+        initializeCustomInputFields();
         Session.newSession();
+    }
+
+    private void initializeCustomInputFields() {
+        customAreaEasting = (EditText) findViewById(R.id.area_easting_custom);
+        customAreaNorthing = (EditText) findViewById(R.id.area_northing_custom);
+        customContextNumber = (EditText) findViewById(R.id.context_number_custom);
+        customSampleNumber = (EditText) findViewById(R.id.sample_number_custom);
     }
 
     private void initializeButtons() {
@@ -110,10 +121,9 @@ public class MainActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 sampleNumberSelection = (String) adapterView.getItemAtPosition(i);
                 if (!sampleNumberSelection.equalsIgnoreCase(SAMPLE_NUMBER_HINT)) {
-                    Toast toast = Toast.makeText(getApplicationContext(), "Selected composite key: " +
+                    Log.d(TAG, "Selected composite key: " +
                             areaEastingSelection + "-" + areaNorthingSelection + "-"
-                            + contextNumberSelection + "-" + sampleNumberSelection, Toast.LENGTH_SHORT);
-                    toast.show();
+                            + contextNumberSelection + "-" + sampleNumberSelection);
                 }
             }
 
@@ -136,10 +146,8 @@ public class MainActivity extends AppCompatActivity {
                     // empty all lists for subsequent dropdowns
                     sampleNumberData.clear();
                     sampleNumberAdapter.notifyDataSetChanged();
+                    Log.d(TAG, "Selected context number: " + contextNumberSelection);
 
-                    Toast toast = Toast.makeText(getApplicationContext(), "Selected context number: " +
-                            contextNumberSelection, Toast.LENGTH_SHORT);
-                    toast.show();
                     refreshSampleNumberData();
                 }
             }
@@ -166,9 +174,7 @@ public class MainActivity extends AppCompatActivity {
                     contextNumberAdapter.notifyDataSetChanged();
                     sampleNumberAdapter.notifyDataSetChanged();
 
-                    Toast toast = Toast.makeText(getApplicationContext(), "Selected area_northing: " +
-                            areaNorthingSelection, Toast.LENGTH_SHORT);
-                    toast.show();
+                    Log.d(TAG, "Selected area_northing: " + areaNorthingSelection);
                     refreshContextNumberData();
                 }
             }
@@ -228,9 +234,7 @@ public class MainActivity extends AppCompatActivity {
                     contextNumberAdapter.notifyDataSetChanged();
                     sampleNumberAdapter.notifyDataSetChanged();
 
-                    Toast toast = Toast.makeText(getApplicationContext(), "Selected area_easting: " +
-                            areaEastingSelection, Toast.LENGTH_SHORT);
-                    toast.show();
+                    Log.d(TAG, "Selected area_easting: " + areaEastingSelection);
                     refreshAreaNorthingData();
                 }
             }
@@ -345,7 +349,42 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onSearchButtonClick() {
+        String areaEastingCustom = customAreaEasting.getText().toString();
+        String areaEasting, areaNorthing, contextNumber, sampleNumber;
+        if ((areaEastingCustom == null || areaEastingCustom.isEmpty()) &&
+                (areaEastingSelection == null || areaEastingSelection.equalsIgnoreCase(AREA_EASTING_HINT))) {
+
+            Toast toast = Toast.makeText(getApplicationContext(), "Please Select Values from " +
+                            "Dropdown or Enter Custom Composite Key", Toast.LENGTH_SHORT);
+            toast.show();
+            return;
+        } else if (areaEastingCustom == null || areaEastingCustom.isEmpty()) {
+            areaEasting = areaEastingSelection;
+            areaNorthing = areaNorthingSelection;
+            contextNumber = contextNumberSelection;
+            sampleNumber = sampleNumberSelection;
+        } else {
+            areaEasting = areaEastingCustom;
+            areaNorthing = customAreaNorthing.getText().toString();
+            contextNumber = customContextNumber.getText().toString();
+            sampleNumber = customSampleNumber.getText().toString();
+        }
+
+        if (areaEasting == null || areaEasting.isEmpty() ||
+                areaNorthing == null || areaNorthing.isEmpty() ||
+                contextNumber == null || contextNumber.isEmpty() ||
+                sampleNumber == null || sampleNumber.isEmpty()) {
+            Toast toast = Toast.makeText(getApplicationContext(), "Please Select Values from " +
+                    "Dropdown or Enter Custom Composite Key", Toast.LENGTH_SHORT);
+            toast.show();
+            return;
+        }
+
         Intent i = new Intent(this, SearchActivity.class);
+        i.putExtra("Area Easting", areaEasting);
+        i.putExtra("Area Northing", areaNorthing);
+        i.putExtra("Context Number", contextNumber);
+        i.putExtra("Sample Number", sampleNumber);
         startActivityForResult(i, 1);
     }
     

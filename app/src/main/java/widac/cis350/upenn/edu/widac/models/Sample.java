@@ -44,9 +44,6 @@ public class Sample {
     }
 
     public static Sample parseJSON(String response) {
-        System.out.println("BHALIWBJFHBEW");
-        System.out.println(response);
-
         Gson gson = new GsonBuilder().create();
         Sample sample = gson.fromJson(response, Sample.class);
         return sample;

@@ -89,14 +89,4 @@ public class SettingsActivity extends AppCompatActivity {
         startActivity(intentOpenBluetoothSettings);
     }
 
-    public void onSettingsSearchButtonClick(View v) {
-        if (Session.deviceName == null) {
-            Toast.makeText(this, "Please connect a device", Toast.LENGTH_SHORT).show();
-        } else {
-            Intent i = new Intent(this, SearchActivity.class);
-            startActivityForResult(i, 1);
-            finish();
-        }
-    }
-
 }
