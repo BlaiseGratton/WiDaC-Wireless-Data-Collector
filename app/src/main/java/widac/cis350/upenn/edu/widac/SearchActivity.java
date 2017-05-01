@@ -66,6 +66,11 @@ public class SearchActivity extends AppCompatActivity {
                 }
             }
         }
+        sample = db.retrieveSample(i.getStringExtra("compositeKey"));
+        sample  = db.retrieveSample(i.getStringExtra("compositeKey"));
+        TextView itemWeight = (TextView) findViewById(R.id.itemWeight);
+        String displayWeight = (sample.getWeight() == 0) ? "No Data" : "" + sample.getWeight();
+        itemWeight.setText(displayWeight);
 
         Toast.makeText(this, Session.deviceName, Toast.LENGTH_SHORT).show();
 
@@ -145,17 +150,12 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     public void onPrevButtonClick(View v) {
-        TextView itemName = (TextView) findViewById(R.id.item_name);
         //String prevName = itemName.getText().toString();
-        itemName.setText("Item 122");
         TextView weightText = (TextView) findViewById(R.id.itemWeight);
         weightText.setText("Weight: 121g");
     }
 
     public void onNextButtonClick(View v) {
-        TextView itemName = (TextView) findViewById(R.id.item_name);
-        //String prevName = itemName.getText().toString();
-        itemName.setText("Item 124");
         TextView weightText = (TextView) findViewById(R.id.itemWeight);
         weightText.setText("Weight: 235g");
     }
@@ -173,8 +173,6 @@ public class SearchActivity extends AppCompatActivity {
             int code = response.code();
             if (code == 200) {
                 SearchActivity.this.sample = response.body();
-                TextView itemName = (TextView) findViewById(R.id.item_name);
-                itemName.setText(sample.getCompositeKey());
                 TextView itemWeight = (TextView) findViewById(R.id.itemWeight);
                 String displayWeight = (sample.getWeight() == 0) ? "No Data" : "" + sample.getWeight();
                 itemWeight.setText("Weight: " + displayWeight + "g");

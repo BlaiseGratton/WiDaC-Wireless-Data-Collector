@@ -40,6 +40,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+<<<<<<< HEAD
 
         // Populate the currenlty paired devices list
         //Add currently paired devices to list
@@ -112,6 +113,8 @@ public class SettingsActivity extends AppCompatActivity {
             Intent i = new Intent(this, SearchActivity.class);
             startActivityForResult(i, 1);
         }
+=======
+>>>>>>> master
     }
 
 }
